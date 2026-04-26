@@ -1471,6 +1471,13 @@
     .stat-val { font-size: 24px; }
   }
 </style>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#f5c518">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="فريق المستقبل">
+<link rel="apple-touch-icon" href="icon-192.png">
 </head>
 <body>
 
@@ -1971,68 +1978,48 @@ async function enterApp(role) {
     document.getElementById('user-role-el').textContent = 'وضع المشاهدة';
   }
 
-  // ── Auto-sync from Google Sheets on open ──
+  // ── جلب البيانات من Google Sheets — المصدر الوحيد ──
   gsUrl = localStorage.getItem('gs_url') || 'https://script.google.com/macros/s/AKfycby84-QhGJgVXbU6zAFiPWQ-4DX52kubFyqRCH4gELTgCBdrbgRZm1yDJv9kWlII_7MujQ/exec';
+
   if (gsUrl) {
-    showToast('🔄 جاري مزامنة البيانات...');
+    showToast('🔄 جاري تحميل البيانات...');
     try {
-      // جلب البيانات من الشيت
       const res = await fetch(gsUrl + '?t=' + Date.now());
       const text = await res.text();
       const remote = JSON.parse(text);
 
-      if (remote && remote.players) {
-        // ── دمج ذكي: الأحدث يفوز ──
-        const localData = data;
-
-        // اجمع كل اللاعبين من المحلي والشيت
-        const mergedPlayers = [...remote.players];
-        localData.players.forEach(localP => {
-          const existsInRemote = mergedPlayers.find(r => r.id === localP.id);
-          if (!existsInRemote) {
-            // لاعب موجود محلياً لكن غير موجود في الشيت — أضفه
-            mergedPlayers.push(localP);
-          }
-        });
-
-        // اجمع التقييمات
-        const remoteRatingIds = new Set((remote.ratings||[]).map(r => r.id));
-        const localOnlyRatings = localData.ratings.filter(r => !remoteRatingIds.has(r.id));
-        const mergedRatings = [...(remote.ratings||[]), ...localOnlyRatings];
-
-        // اجمع الحضور
-        const remoteAttDates = new Set((remote.attendance||[]).map(a => a.date + a.type));
-        const localOnlyAtt = localData.attendance.filter(a => !remoteAttDates.has(a.date + a.type));
-        const mergedAtt = [...(remote.attendance||[]), ...localOnlyAtt];
-
-        // احتفظ بالصور المحلية
+      if (remote && remote.players && Array.isArray(remote.players)) {
+        // ── الشيت هو المصدر الوحيد ──
+        // احتفظ بالصور المحلية فقط لأنها لا تُرفع للشيت
         const photoMap = {};
-        localData.players.forEach(p => { if (p.photo) photoMap[p.id] = p.photo; });
-        data.players = mergedPlayers.map(p => ({ ...p, photo: photoMap[p.id] || p.photo || null }));
-        data.ratings = mergedRatings;
-        data.attendance = mergedAtt;
-        nextPlayerId = Math.max(...data.players.map(p => p.id), 0) + 1;
-        nextRatingId = Math.max(...data.ratings.map(r => r.id), 0) + 1;
+        data.players.forEach(p => { if (p.photo) photoMap[p.id] = p.photo; });
 
-        // احفظ محلياً
+        data.players    = remote.players.map(p => ({ ...p, photo: photoMap[p.id] || null }));
+        data.ratings    = remote.ratings    || [];
+        data.attendance = remote.attendance || [];
+
+        nextPlayerId = data.players.length > 0 ? Math.max(...data.players.map(p=>p.id), 0) + 1 : 1;
+        nextRatingId = data.ratings.length  > 0 ? Math.max(...data.ratings.map(r=>r.id), 0)  + 1 : 1;
+
+        // احفظ نسخة cache محلية
         localStorage.setItem('academy_data', JSON.stringify(data));
-
-        // ارسل البيانات المدمجة للشيت لتحديثه
         gsConnected = true;
-        pushToSheets(gsUrl);
-
-        showToast('✅ تمت المزامنة — ' + data.players.length + ' لاعب');
+        showToast('✅ البيانات محدّثة — ' + data.players.length + ' لاعب');
       } else {
-        // الشيت فارغ — ارسل البيانات المحلية له
+        // الشيت فارغ — إذا عندنا بيانات محلية ارفعها
         gsConnected = true;
-        pushToSheets(gsUrl);
-        showToast('☁️ تم رفع بياناتك للشيت');
+        if (data.players.length > 0) {
+          pushToSheets(gsUrl);
+          showToast('☁️ تم رفع بياناتك للشيت');
+        } else {
+          showToast('☁️ متصل — لا يوجد لاعبون بعد');
+        }
       }
     } catch(e) {
-      console.warn('Auto-sync failed:', e);
-      // فشل الاتصال — استمر بالبيانات المحلية وحاول الإرسال
+      console.warn('Sheets fetch failed:', e);
       gsConnected = false;
-      showToast('📴 لا يوجد إنترنت — البيانات المحلية محفوظة');
+      // استخدم الـ cache المحلي كبديل مؤقت
+      showToast('📴 لا إنترنت — تعمل بالبيانات المحفوظة');
     }
   }
 
@@ -2063,28 +2050,33 @@ function requireAdmin(action) {
 }
 
 // ── DATA ──
-let data = JSON.parse(localStorage.getItem('academy_data') || 'null') || {
-  players: [
-    { id:1, name:'أحمد محمد', age:16, pos:'مهاجم', number:9, nationality:'عُماني', phone:'+968 91234567', parent:'محمد علي', team:'الفريق أ', skills:{speed:9,passing:7,shooting:8,dribbling:7,defense:4} },
-    { id:2, name:'سالم الحارثي', age:15, pos:'وسط', number:8, nationality:'عُماني', phone:'+968 92345678', parent:'خالد الحارثي', team:'الفريق أ', skills:{speed:7,passing:8,shooting:6,dribbling:8,defense:6} },
-    { id:3, name:'خالد البلوشي', age:17, pos:'مدافع', number:5, nationality:'عُماني', phone:'+968 93456789', parent:'سيف البلوشي', team:'الفريق ب', skills:{speed:6,passing:6,shooting:4,dribbling:5,defense:9} },
-    { id:4, name:'يوسف الريامي', age:14, pos:'حارس مرمى', number:1, nationality:'عُماني', phone:'+968 94567890', parent:'ناصر الريامي', team:'الفريق ب', skills:{speed:5,passing:4,shooting:3,dribbling:4,defense:9} },
-    { id:5, name:'راشد المعمري', age:15, pos:'مهاجم', number:11, nationality:'عُماني', phone:'+968 95678901', parent:'فيصل المعمري', team:'الفريق أ', skills:{speed:8,passing:7,shooting:7,dribbling:8,defense:3} },
-  ],
-  ratings: [
-    { id:1, playerId:1, date:'2025-04-15', type:'تدريب', overall:8.5, skills:{speed:9,passing:7,shooting:8,dribbling:8,defense:4}, note:'أداء ممتاز، تحسن واضح في التسديد' },
-    { id:2, playerId:2, date:'2025-04-15', type:'تدريب', overall:7.0, skills:{speed:7,passing:8,shooting:6,dribbling:7,defense:6}, note:'جيد في التمرير، يحتاج تطوير في السرعة' },
-    { id:3, playerId:5, date:'2025-04-15', type:'تدريب', overall:7.5, skills:{speed:8,passing:7,shooting:7,dribbling:8,defense:3}, note:'مثابر وسريع' },
-    { id:4, playerId:1, date:'2025-04-10', type:'مباراة', overall:9.0, skills:{speed:9,passing:8,shooting:9,dribbling:8,defense:4}, note:'نجم المباراة، أحرز هدفين' },
-  ],
+// البيانات فارغة افتراضياً — Google Sheets هو المصدر الوحيد
+let data = {
+  players: [],
+  ratings: [],
   attendance: []
 };
 
-let nextPlayerId = Math.max(...data.players.map(p=>p.id), 0) + 1;
-let nextRatingId = Math.max(...data.ratings.map(r=>r.id), 0) + 1;
+// تحميل البيانات المحلية المؤقتة (cache فقط)
+const localCache = JSON.parse(localStorage.getItem('academy_data') || 'null');
+if (localCache && localCache.players) {
+  data = localCache;
+}
+
+let nextPlayerId = data.players.length > 0 ? Math.max(...data.players.map(p=>p.id), 0) + 1 : 1;
+let nextRatingId = data.ratings.length > 0 ? Math.max(...data.ratings.map(r=>r.id), 0) + 1 : 1;
 let todayAttendance = {};
 
-function save() { localStorage.setItem('academy_data', JSON.stringify(data)); }
+// الحفظ المحلي فقط كـ cache مؤقت
+function save() {
+  localStorage.setItem('academy_data', JSON.stringify(data));
+  // ارسل للشيت فوراً — هو المصدر الحقيقي
+  if (gsUrl) {
+    pushToSheets(gsUrl)
+      .then(() => { gsConnected = true; updateSyncTime(); })
+      .catch(() => { gsConnected = false; });
+  }
+}
 
 // ── UTILS ──
 function getPlayerRating(id) {
@@ -2992,19 +2984,13 @@ function copyAppsScript() {
     .catch(() => showToast('❌ تعذّر النسخ — انسخ يدوياً'));
 }
 
-// Auto-push to sheets whenever data changes
+// Auto-push to sheets whenever data changes — الشيت هو المصدر الوحيد
 function save() {
   localStorage.setItem('academy_data', JSON.stringify(data));
   if (gsUrl) {
-    // أرسل للشيت مباشرة بعد كل تغيير
     pushToSheets(gsUrl)
-      .then(() => {
-        gsConnected = true;
-        updateSyncTime();
-      })
-      .catch(() => {
-        gsConnected = false;
-      });
+      .then(() => { gsConnected = true; updateSyncTime(); })
+      .catch(() => { gsConnected = false; });
   }
 }
 
@@ -3035,6 +3021,15 @@ function doLogin() {
     document.getElementById('login-pass').value = '';
     document.getElementById('login-pass').focus();
   }
+}
+
+// ── Service Worker (PWA) ──
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(() => console.log('✅ SW registered'))
+      .catch(e => console.warn('SW failed:', e));
+  });
 }
 
 // ── INIT ── show login screen, app hidden until login
