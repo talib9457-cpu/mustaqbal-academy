@@ -786,22 +786,21 @@
     background: linear-gradient(135deg, rgba(245,197,24,0.1), rgba(245,197,24,0.03));
     border: 1px solid rgba(245,197,24,0.2);
     border-radius: 20px;
-    padding: 24px;
+    padding: 20px;
     display: flex;
     align-items: center;
-    gap: 24px;
+    gap: 20px;
     margin-bottom: 28px;
   }
 
-  .potm-card-small {
+  .potm-section .fifa-card {
+    width: 130px !important;
     flex-shrink: 0;
-    width: 160px;
-    height: 213px;
   }
 
-  .potm-info h2 { font-size: 14px; color: var(--gold); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px; }
-  .potm-info h3 { font-size: 32px; font-weight: 900; margin-bottom: 4px; }
-  .potm-info p { color: var(--text-muted); font-size: 14px; }
+  .potm-info h2 { font-size: 13px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+  .potm-info h3 { font-size: 24px; font-weight: 900; margin-bottom: 4px; }
+  .potm-info p { color: var(--text-muted); font-size: 13px; }
 
   /* ── EMPTY STATE ── */
   .empty-state {
@@ -2050,31 +2049,50 @@ function requireAdmin(action) {
 }
 
 // ── DATA ──
-// البيانات فارغة افتراضياً — Google Sheets هو المصدر الوحيد
+// امسح الكاش القديم دائماً — Google Sheets هو المصدر الوحيد
+localStorage.removeItem('academy_data');
+
 let data = {
   players: [],
   ratings: [],
   attendance: []
 };
 
-// تحميل البيانات المحلية المؤقتة (cache فقط)
-const localCache = JSON.parse(localStorage.getItem('academy_data') || 'null');
-if (localCache && localCache.players) {
-  data = localCache;
-}
-
-let nextPlayerId = data.players.length > 0 ? Math.max(...data.players.map(p=>p.id), 0) + 1 : 1;
-let nextRatingId = data.ratings.length > 0 ? Math.max(...data.ratings.map(r=>r.id), 0) + 1 : 1;
+let nextPlayerId = 1;
+let nextRatingId = 1;
 let todayAttendance = {};
 
-// الحفظ المحلي فقط كـ cache مؤقت
+// الحفظ — الشيت هو المصدر الوحيد
 function save() {
-  localStorage.setItem('academy_data', JSON.stringify(data));
-  // ارسل للشيت فوراً — هو المصدر الحقيقي
   if (gsUrl) {
     pushToSheets(gsUrl)
-      .then(() => { gsConnected = true; updateSyncTime(); })
+      .then(result => {
+        if (result.ok) {
+          gsConnected = true;
+          updateSyncTime();
+          // تحقق أن البيانات وصلت فعلاً
+          setTimeout(() => verifySync(), 4000);
+        }
+      })
       .catch(() => { gsConnected = false; });
+  }
+}
+
+// تحقق أن البيانات في الشيت محدّثة
+async function verifySync() {
+  try {
+    const res = await fetch(gsUrl + '?t=' + Date.now());
+    const text = await res.text();
+    const remote = JSON.parse(text);
+    if (remote && remote.players && remote.players.length === data.players.length) {
+      console.log('✅ Verified: Sheets has', remote.players.length, 'players');
+    } else {
+      // لم تصل — حاول مرة ثانية
+      console.warn('⚠️ Sheets mismatch, retrying...');
+      pushToSheets(gsUrl);
+    }
+  } catch(e) {
+    console.warn('Verify failed:', e);
   }
 }
 
@@ -2231,7 +2249,9 @@ function renderDashboard() {
     const potm = playerRatings[0];
     document.getElementById('potm-section').innerHTML = `
       <div class="potm-section">
-        ${buildCard(potm.player)}
+        <div style="width:130px;flex-shrink:0">
+          ${buildCard(potm.player, true).replace(`onclick="openProfile(${potm.player.id})"`, `onclick="openProfile(${potm.player.id})" style="width:130px"`)}
+        </div>
         <div class="potm-info">
           <h2>🏆 لاعب الشهر</h2>
           <h3>${potm.player.name}</h3>
@@ -2889,7 +2909,35 @@ async function pushToSheets(url) {
   };
   const jsonStr = JSON.stringify(payload);
 
-  // Method 1: hidden form POST via iframe — bypasses CORS 100%
+  // الطريقة الأولى: fetch POST مباشر
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      body: jsonStr,
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+    });
+    const text = await res.text();
+    console.log('✅ POST direct OK:', text.slice(0,80));
+    return { ok: true };
+  } catch(e1) {
+    console.warn('POST direct failed:', e1.message);
+  }
+
+  // الطريقة الثانية: fetch no-cors POST
+  try {
+    await fetch(url, {
+      method: 'POST',
+      body: jsonStr,
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' }
+    });
+    console.log('✅ POST no-cors sent');
+    return { ok: true };
+  } catch(e2) {
+    console.warn('POST no-cors failed:', e2.message);
+  }
+
+  // الطريقة الثالثة: iframe form POST
   try {
     let iframe = document.getElementById('_gs_iframe');
     if (!iframe) {
@@ -2899,37 +2947,23 @@ async function pushToSheets(url) {
       iframe.style.display = 'none';
       document.body.appendChild(iframe);
     }
-
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = url;
     form.target = '_gs_iframe';
     form.style.display = 'none';
-
     const input = document.createElement('input');
     input.type = 'hidden';
     input.name = 'data';
     input.value = jsonStr;
     form.appendChild(input);
-
     document.body.appendChild(form);
     form.submit();
     setTimeout(() => { try { form.remove(); } catch(e){} }, 5000);
-    console.log('✅ Form POST submitted, size:', jsonStr.length);
+    console.log('✅ Form POST submitted');
     return { ok: true };
-  } catch(e) {
-    console.warn('Form POST failed:', e);
-  }
-
-  // Method 2: fetch no-cors POST fallback
-  try {
-    const formData = new FormData();
-    formData.append('data', jsonStr);
-    await fetch(url, { method: 'POST', body: formData, mode: 'no-cors' });
-    console.log('✅ fetch no-cors POST sent');
-    return { ok: true };
-  } catch(e2) {
-    console.warn('fetch POST failed:', e2);
+  } catch(e3) {
+    console.warn('Form POST failed:', e3.message);
   }
 
   return { ok: false };
