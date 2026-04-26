@@ -1,0 +1,3044 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فريق المستقبل</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #f5c518;
+    --gold-dark: #c9a000;
+    --navy: #0a0e1a;
+    --navy2: #111827;
+    --navy3: #1a2235;
+    --blue-glow: #3b82f6;
+    --purple: #7c3aed;
+    --cyan: #06b6d4;
+    --green: #10b981;
+    --red: #ef4444;
+    --silver: #b0b8c8;
+    --bronze: #cd7f32;
+    --text: #e2e8f0;
+    --text-muted: #94a3b8;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Tajawal', sans-serif;
+    background: var(--navy);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background stars */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(59,130,246,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(124,58,237,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(6,182,212,0.04) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: relative;
+    z-index: 10;
+    background: linear-gradient(135deg, #0d1220 0%, #111827 100%);
+    border-bottom: 2px solid rgba(245,197,24,0.3);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-icon {
+    width: 46px; height: 46px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 0 20px rgba(245,197,24,0.4);
+  }
+
+  .logo-text { font-size: 20px; font-weight: 800; }
+  .logo-sub { font-size: 11px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; }
+
+  nav {
+    display: flex;
+    gap: 4px;
+  }
+
+  nav button {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-family: 'Tajawal', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  nav button:hover { background: rgba(255,255,255,0.08); color: var(--text); }
+  nav button.active {
+    background: rgba(245,197,24,0.15);
+    color: var(--gold);
+    border: 1px solid rgba(245,197,24,0.3);
+  }
+
+  /* ── LAYOUT ── */
+  .app {
+    position: relative;
+    z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 24px 20px;
+  }
+
+  /* ── SECTION HEADER ── */
+  .section-title {
+    font-size: 28px;
+    font-weight: 900;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-title span {
+    background: linear-gradient(90deg, var(--gold), #fff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── STATS BANNER ── */
+  .stats-banner {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .stat-card {
+    background: linear-gradient(135deg, var(--navy2), var(--navy3));
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s;
+  }
+
+  .stat-card:hover { transform: translateY(-3px); }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 80px; height: 80px;
+    border-radius: 0 16px 0 80px;
+    opacity: 0.15;
+  }
+
+  .stat-card:nth-child(1)::before { background: var(--gold); }
+  .stat-card:nth-child(2)::before { background: var(--blue-glow); }
+  .stat-card:nth-child(3)::before { background: var(--green); }
+  .stat-card:nth-child(4)::before { background: var(--purple); }
+
+  .stat-icon { font-size: 24px; margin-bottom: 8px; }
+  .stat-val { font-size: 36px; font-weight: 900; line-height: 1; }
+  .stat-label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+  /* ── VIEWS ── */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ── PLAYER GRID ── */
+  .player-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+    gap: 28px;
+  }
+
+  /* ══════════════════════════════════
+     FIFA ULTIMATE TEAM CARD
+  ══════════════════════════════════ */
+  .fifa-card {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 0.67;
+    cursor: pointer;
+    transition: transform 0.4s cubic-bezier(.34,1.4,.64,1), filter 0.4s;
+    filter: drop-shadow(0 10px 30px rgba(0,0,0,0.6));
+  }
+
+  .fifa-card:hover {
+    transform: translateY(-12px) scale(1.05);
+    filter: drop-shadow(0 24px 50px rgba(0,0,0,0.75));
+  }
+
+  /* Outer shield shape using SVG-style border-radius + clip */
+  .card-shell {
+    position: absolute;
+    inset: 0;
+    border-radius: 12px 12px 50% 50% / 12px 12px 30px 30px;
+    overflow: hidden;
+  }
+
+  /* Full card background gradients per tier */
+  .gold-card .card-shell {
+    background: linear-gradient(170deg, #ffe066 0%, #f5c518 20%, #c8920a 50%, #9a6e00 70%, #c89800 85%, #f0c800 100%);
+    box-shadow: inset 0 0 60px rgba(0,0,0,0.15), 0 0 0 2px rgba(255,230,100,0.6);
+  }
+  .silver-card .card-shell {
+    background: linear-gradient(170deg, #e8eef8 0%, #c4cede 20%, #8e9db5 50%, #6a7d98 70%, #9aaac0 85%, #d0daea 100%);
+    box-shadow: inset 0 0 60px rgba(0,0,0,0.1), 0 0 0 2px rgba(200,216,240,0.6);
+  }
+  .bronze-card .card-shell {
+    background: linear-gradient(170deg, #f0c080 0%, #d08820 20%, #a06010 50%, #7a4808 70%, #b07020 85%, #e0a040 100%);
+    box-shadow: inset 0 0 60px rgba(0,0,0,0.15), 0 0 0 2px rgba(220,160,60,0.6);
+  }
+  .potm-card .card-shell {
+    background: linear-gradient(170deg, #1e3a70 0%, #0e1e48 20%, #060c22 50%, #030818 70%, #0a1630 85%, #162248 100%);
+    box-shadow: inset 0 0 60px rgba(245,197,24,0.06), 0 0 0 2px rgba(245,197,24,0.5);
+  }
+
+  /* Diagonal shimmer streaks */
+  .card-streaks {
+    position: absolute;
+    inset: 0;
+    opacity: 0.12;
+    background: repeating-linear-gradient(
+      58deg,
+      rgba(255,255,255,0.7) 0px, rgba(255,255,255,0.7) 1.5px,
+      transparent 1.5px, transparent 16px
+    );
+    pointer-events: none;
+  }
+
+  /* Top half: player photo fills it completely */
+  .card-photo-zone {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 62%;
+    overflow: hidden;
+  }
+
+  .card-photo-zone img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+  }
+
+  .card-photo-zone .card-no-photo {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: clamp(40px, 10vw, 64px);
+    opacity: 0.5;
+  }
+
+  /* Gradient fade from photo into card color */
+  .card-photo-fade {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 50%;
+    pointer-events: none;
+  }
+
+  .gold-card .card-photo-fade {
+    background: linear-gradient(to bottom, transparent 0%, #c8920a 70%, #b07800 100%);
+  }
+  .silver-card .card-photo-fade {
+    background: linear-gradient(to bottom, transparent 0%, #7a8daa 70%, #6a7d98 100%);
+  }
+  .bronze-card .card-photo-fade {
+    background: linear-gradient(to bottom, transparent 0%, #9a5e10 70%, #7a4808 100%);
+  }
+  .potm-card .card-photo-fade {
+    background: linear-gradient(to bottom, transparent 0%, #060c22 70%, #030818 100%);
+  }
+
+  /* Rating badge — top left corner */
+  .card-rating-block {
+    position: absolute;
+    top: 6%; left: 7%;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1;
+    gap: 1px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  }
+
+  .card-rating {
+    font-size: clamp(26px, 7vw, 38px);
+    font-weight: 900;
+    letter-spacing: -1px;
+  }
+  .card-pos {
+    font-size: clamp(8px, 2vw, 11px);
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .gold-card .card-rating, .bronze-card .card-rating { color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.6); }
+  .silver-card .card-rating { color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.5); }
+  .potm-card .card-rating { color: #f5c518; text-shadow: 0 0 20px rgba(245,197,24,0.6); }
+
+  .gold-card .card-pos, .bronze-card .card-pos { color: rgba(255,255,255,0.85); }
+  .silver-card .card-pos { color: rgba(255,255,255,0.8); }
+  .potm-card .card-pos { color: rgba(245,197,24,0.85); }
+
+  /* Flag + club — top right */
+  .card-badge-block {
+    position: absolute;
+    top: 6%; right: 7%;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .card-flag { font-size: clamp(14px, 3.5vw, 20px); line-height: 1; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.5)); }
+  .card-club { font-size: clamp(10px, 2.5vw, 15px); opacity: 0.8; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.5)); }
+
+  /* Bottom info section */
+  .card-info-zone {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2% 6% 5%;
+    z-index: 10;
+  }
+
+  /* POTM crown label */
+  .card-potm-label {
+    display: none;
+    font-size: clamp(6px, 1.5vw, 8px);
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #f5c518;
+    margin-bottom: 1px;
+    text-shadow: 0 0 10px rgba(245,197,24,0.6);
+  }
+  .potm-card .card-potm-label { display: block; }
+
+  .card-name {
+    font-size: clamp(9px, 2.4vw, 13px);
+    font-weight: 900;
+    text-align: center;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 95%;
+    margin-bottom: 4%;
+  }
+
+  .gold-card .card-name, .bronze-card .card-name { color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,0.4); }
+  .silver-card .card-name { color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,0.35); }
+  .potm-card .card-name { color: #fff; }
+
+  .card-divider {
+    width: 75%; height: 1px; margin-bottom: 4%;
+  }
+  .gold-card .card-divider, .bronze-card .card-divider { background: rgba(255,255,255,0.35); }
+  .silver-card .card-divider { background: rgba(255,255,255,0.3); }
+  .potm-card .card-divider { background: linear-gradient(90deg, transparent, rgba(245,197,24,0.7), transparent); }
+
+  /* Stats 3-column layout like FIFA */
+  .card-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0px 2px;
+    width: 100%;
+  }
+
+  .card-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .card-stat-num {
+    font-weight: 900;
+    font-size: clamp(9px, 2.4vw, 13px);
+    line-height: 1.1;
+    color: #fff;
+  }
+
+  .card-stat-lbl {
+    font-weight: 700;
+    font-size: clamp(5.5px, 1.4vw, 7.5px);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    opacity: 0.75;
+    color: #fff;
+  }
+
+  .potm-card .card-stat-num { color: #f5c518; }
+  .potm-card .card-stat-lbl { color: rgba(245,197,24,0.7); }
+
+  /* ── TOOLBAR ── */
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  .search-box {
+    flex: 1;
+    min-width: 200px;
+    background: var(--navy2);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 10px 16px;
+    color: var(--text);
+    font-family: 'Tajawal', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .search-box:focus { border-color: var(--gold); }
+  .search-box::placeholder { color: var(--text-muted); }
+
+  .filter-select {
+    background: var(--navy2);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 10px 16px;
+    color: var(--text);
+    font-family: 'Tajawal', sans-serif;
+    font-size: 14px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .btn {
+    padding: 10px 20px;
+    border-radius: 12px;
+    border: none;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .btn-gold {
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: #1a1200;
+    box-shadow: 0 4px 15px rgba(245,197,24,0.3);
+  }
+
+  .btn-gold:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(245,197,24,0.4);
+  }
+
+  .btn-outline {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--text);
+  }
+
+  .btn-outline:hover { background: rgba(255,255,255,0.08); }
+
+  .btn-blue {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(59,130,246,0.3);
+  }
+
+  .btn-red {
+    background: linear-gradient(135deg, #ef4444, #b91c1c);
+    color: #fff;
+  }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: linear-gradient(135deg, #111827, #1a2235);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px;
+    padding: 32px;
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 25px 80px rgba(0,0,0,0.6);
+    animation: modalIn 0.3s ease;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.9) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .modal h2 {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 24px;
+    color: var(--gold);
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 16px; left: 16px;
+    width: 32px; height: 32px;
+    background: rgba(255,255,255,0.1);
+    border: none; border-radius: 8px;
+    color: var(--text); cursor: pointer;
+    font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+
+  .modal-close:hover { background: rgba(255,0,0,0.3); }
+
+  /* ── FORM ── */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-full { grid-column: 1/-1; }
+
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+
+  .form-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: 'Tajawal', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus { border-color: var(--gold); }
+
+  .form-group select option { background: #1a2235; }
+  .form-group textarea { resize: vertical; min-height: 80px; }
+
+  /* ── SKILL BARS ── */
+  .skills-section { margin-top: 16px; }
+  .skills-section h3 { font-size: 14px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+
+  .skill-row {
+    display: grid;
+    grid-template-columns: 80px 1fr 50px;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .skill-label { font-size: 13px; font-weight: 700; color: var(--gold); }
+
+  .skill-slider {
+    -webkit-appearance: none;
+    height: 8px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.1);
+    outline: none;
+    cursor: pointer;
+  }
+
+  .skill-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--gold);
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(245,197,24,0.5);
+  }
+
+  .skill-val {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gold);
+    background: rgba(245,197,24,0.1);
+    border-radius: 6px;
+    padding: 2px 6px;
+  }
+
+  /* ── PLAYER PROFILE (full) ── */
+  .profile-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 24px;
+  }
+
+  .profile-card-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .profile-big-card {
+    width: 100%;
+    aspect-ratio: 0.67;
+  }
+
+  .potm-card-small {
+    flex-shrink: 0;
+    width: 145px;
+    aspect-ratio: 0.67;
+  }
+
+  .profile-info { display: flex; flex-direction: column; gap: 16px; }
+
+  .info-card {
+    background: var(--navy2);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 20px;
+  }
+
+  .info-card h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .info-item label { font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 2px; }
+  .info-item span { font-size: 15px; font-weight: 700; }
+
+  /* ── PERFORMANCE CHART ── */
+  .perf-bars { display: flex; flex-direction: column; gap: 10px; }
+
+  .perf-bar-row {
+    display: grid;
+    grid-template-columns: 80px 1fr 36px;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .perf-bar-label { font-size: 12px; font-weight: 700; color: var(--gold); }
+
+  .perf-bar-track {
+    height: 10px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  .perf-bar-fill {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.8s ease;
+  }
+
+  .perf-bar-val { font-size: 13px; font-weight: 700; text-align: center; }
+
+  /* ── HISTORY TABLE ── */
+  .history-table { width: 100%; border-collapse: collapse; }
+
+  .history-table th {
+    text-align: right;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .history-table td {
+    padding: 10px 12px;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .history-table tr:hover td { background: rgba(255,255,255,0.03); }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .badge-gold { background: rgba(245,197,24,0.2); color: var(--gold); }
+  .badge-blue { background: rgba(59,130,246,0.2); color: #60a5fa; }
+  .badge-green { background: rgba(16,185,129,0.2); color: #34d399; }
+  .badge-red { background: rgba(239,68,68,0.2); color: #f87171; }
+
+  /* ── ATTENDANCE ── */
+  .attendance-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .attendance-card {
+    background: var(--navy2);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+
+  .attendance-card:hover { border-color: rgba(245,197,24,0.3); }
+
+  .att-avatar {
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .att-info { flex: 1; }
+  .att-name { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+  .att-meta { font-size: 12px; color: var(--text-muted); }
+
+  .att-check {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    border: 2px solid rgba(255,255,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    transition: all 0.2s;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .att-check.checked { background: var(--green); border-color: var(--green); }
+
+  /* ── POTM ── */
+  .potm-section {
+    background: linear-gradient(135deg, rgba(245,197,24,0.1), rgba(245,197,24,0.03));
+    border: 1px solid rgba(245,197,24,0.2);
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 28px;
+  }
+
+  .potm-card-small {
+    flex-shrink: 0;
+    width: 160px;
+    height: 213px;
+  }
+
+  .potm-info h2 { font-size: 14px; color: var(--gold); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px; }
+  .potm-info h3 { font-size: 32px; font-weight: 900; margin-bottom: 4px; }
+  .potm-info p { color: var(--text-muted); font-size: 14px; }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    color: var(--text-muted);
+    text-align: center;
+  }
+
+  .empty-state .icon { font-size: 64px; margin-bottom: 16px; opacity: 0.5; }
+  .empty-state h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .empty-state p { font-size: 14px; margin-bottom: 20px; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--navy3);
+    border: 1px solid rgba(245,197,24,0.3);
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 200;
+    transition: transform 0.3s ease;
+    display: flex; align-items: center; gap: 8px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ── ATTENDANCE SESSION ── */
+  .session-header {
+    background: var(--navy2);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .progress-ring {
+    position: relative;
+    width: 64px; height: 64px; flex-shrink: 0;
+  }
+
+  .progress-ring svg { transform: rotate(-90deg); }
+
+  .progress-ring-text {
+    position: absolute;
+    inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 800;
+  }
+
+  /* ── LOGIN SCREEN ── */
+  #login-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse at 30% 40%, rgba(59,130,246,0.15) 0%, transparent 55%),
+                radial-gradient(ellipse at 70% 70%, rgba(124,58,237,0.12) 0%, transparent 55%),
+                var(--navy);
+  }
+
+  .login-box {
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+  }
+
+  .login-logo {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+
+  .login-ball {
+    width: 80px; height: 80px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 38px;
+    margin: 0 auto 16px;
+    box-shadow: 0 0 40px rgba(245,197,24,0.4), 0 0 80px rgba(245,197,24,0.15);
+    animation: pulseGlow 2.5s ease-in-out infinite;
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 40px rgba(245,197,24,0.4), 0 0 80px rgba(245,197,24,0.15); }
+    50% { box-shadow: 0 0 60px rgba(245,197,24,0.6), 0 0 120px rgba(245,197,24,0.25); }
+  }
+
+  .login-logo h1 { font-size: 28px; font-weight: 900; }
+  .login-logo p { font-size: 12px; color: var(--gold); letter-spacing: 3px; text-transform: uppercase; margin-top: 4px; }
+
+  .login-card {
+    background: linear-gradient(135deg, #111827, #1a2235);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+  }
+
+  .login-card h2 {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 24px;
+    color: var(--text-muted);
+    text-align: center;
+  }
+
+  .login-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 24px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 12px;
+    padding: 4px;
+  }
+
+  .login-tab {
+    padding: 10px;
+    border: none;
+    border-radius: 9px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s;
+    background: transparent;
+    color: var(--text-muted);
+  }
+
+  .login-tab.active {
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: #1a0c00;
+    box-shadow: 0 4px 15px rgba(245,197,24,0.3);
+  }
+
+  .login-field {
+    margin-bottom: 16px;
+  }
+
+  .login-field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .login-field input {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 13px 16px;
+    color: var(--text);
+    font-family: 'Tajawal', sans-serif;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .login-field input:focus {
+    border-color: var(--gold);
+    background: rgba(245,197,24,0.04);
+  }
+
+  .login-error {
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.3);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #f87171;
+    margin-bottom: 16px;
+    display: none;
+    text-align: center;
+  }
+
+  .login-error.show { display: block; }
+
+  .btn-login {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 14px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: #1a0c00;
+    box-shadow: 0 6px 20px rgba(245,197,24,0.35);
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(245,197,24,0.45);
+  }
+
+  .btn-login:active { transform: translateY(0); }
+
+  .guest-info {
+    margin-top: 16px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* ── USER BADGE IN HEADER ── */
+  .user-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 6px 14px 6px 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .user-badge:hover { background: rgba(255,255,255,0.1); }
+
+  .user-avatar {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    font-weight: 800;
+  }
+
+  .user-avatar.admin-av {
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: #1a0c00;
+  }
+
+  .user-avatar.guest-av {
+    background: linear-gradient(135deg, var(--blue-glow), #1d4ed8);
+    color: #fff;
+  }
+
+  .user-name { font-size: 13px; font-weight: 700; }
+  .user-role { font-size: 10px; color: var(--text-muted); }
+
+  /* ── GUEST BADGE on add buttons ── */
+  .admin-only { display: none; }
+  body.is-admin .admin-only { display: flex; }
+  body.is-admin nav .admin-only { display: block; }
+
+  /* ── GUEST VIEW overlay on disabled cards ── */
+  .guest-locked {
+    pointer-events: none;
+    opacity: 0.6;
+    position: relative;
+  }
+
+  /* ── SETTINGS MODAL ── */
+  .settings-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding-bottom: 12px;
+  }
+
+  .settings-tab {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    background: transparent;
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+
+  .settings-tab.active {
+    background: rgba(245,197,24,0.15);
+    color: var(--gold);
+    border: 1px solid rgba(245,197,24,0.3);
+  }
+
+  .settings-section { display: none; }
+  .settings-section.active { display: block; }
+
+  .gs-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  .gs-status.connected { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); color: #34d399; }
+  .gs-status.disconnected { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); color: #f87171; }
+
+  .gs-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .gs-dot.on { background: #10b981; box-shadow: 0 0 8px #10b981; animation: blink 1.5s infinite; }
+  .gs-dot.off { background: #ef4444; }
+
+  @keyframes blink {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .gs-steps {
+    background: rgba(0,0,0,0.2);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .gs-step {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+
+  .gs-step:last-child { margin-bottom: 0; }
+
+  .gs-step-num {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: #1a0c00;
+    font-size: 11px;
+    font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .gs-step a { color: var(--gold); text-decoration: none; }
+  .gs-step a:hover { text-decoration: underline; }
+
+  .gs-sync-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* ── EXPORT CARD PREVIEW ── */
+  .export-preview-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 16px;
+    margin-bottom: 20px;
+  }
+
+  #export-card-render {
+    width: 240px;
+  }
+
+  .export-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .btn-export {
+    padding: 14px;
+    border: none;
+    border-radius: 14px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+
+  .btn-export-png {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(59,130,246,0.3);
+  }
+
+  .btn-export-png:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(59,130,246,0.4); }
+
+  .btn-export-pdf {
+    background: linear-gradient(135deg, #ef4444, #b91c1c);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(239,68,68,0.3);
+  }
+
+  .btn-export-pdf:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(239,68,68,0.4); }
+
+  /* Spinner */
+  .spinner {
+    width: 18px; height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--navy); }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+  /* ── PHOTO UPLOAD ── */
+  .photo-upload-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+
+  .photo-preview {
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    border: 3px dashed rgba(245,197,24,0.4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 40px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .photo-preview:hover {
+    border-color: var(--gold);
+    background: rgba(245,197,24,0.08);
+  }
+
+  .photo-preview img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  .photo-preview .photo-overlay {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.5);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+    font-size: 22px;
+  }
+
+  .photo-preview:hover .photo-overlay { opacity: 1; }
+
+  .photo-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .photo-label:hover { color: var(--gold); }
+
+  input[type="file"] { display: none; }
+
+  /* ══════════════════════════════════
+     MOBILE RESPONSIVE — كامل
+  ══════════════════════════════════ */
+  @media (max-width: 768px) {
+
+    /* ── Header ── */
+    header {
+      height: auto;
+      padding: 10px 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .logo-text { font-size: 16px; }
+    .logo-sub { display: none; }
+    .logo-icon { width: 36px; height: 36px; font-size: 18px; }
+
+    /* Nav → bottom tab bar */
+    nav {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      z-index: 999;
+      background: linear-gradient(135deg, #0d1220, #111827);
+      border-top: 1px solid rgba(245,197,24,0.2);
+      display: flex;
+      justify-content: space-around;
+      padding: 6px 4px 10px;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
+    }
+
+    nav button {
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      padding: 6px 10px;
+      font-size: 10px;
+      border-radius: 10px;
+      min-width: 56px;
+    }
+
+    nav button span { display: block !important; font-size: 10px; }
+
+    /* Push content above bottom nav */
+    .app { padding: 16px 12px 90px; }
+
+    /* Settings button in header — smaller */
+    header > div:last-child { gap: 6px; }
+    header > div:last-child .btn { padding: 6px 10px; font-size: 12px; }
+    header > div:last-child .btn span { display: none; }
+
+    /* User badge — compact */
+    .user-badge { padding: 5px 10px 5px 6px; }
+    .user-name { font-size: 11px; }
+    .user-role { display: none; }
+
+    /* ── Stats banner ── */
+    .stats-banner { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .stat-val { font-size: 28px; }
+
+    /* ── Section title ── */
+    .section-title { font-size: 22px; margin-bottom: 14px; }
+
+    /* ── Toolbar ── */
+    .toolbar { gap: 8px; }
+    .search-box { min-width: 0; }
+
+    /* ── Player grid — 2 columns on mobile ── */
+    .player-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    /* ── POTM section ── */
+    .potm-section {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 16px;
+      gap: 16px;
+    }
+
+    .potm-card-small { width: 120px; }
+    .potm-info h3 { font-size: 22px; }
+
+    /* ── Modal — full screen on mobile ── */
+    .modal-overlay {
+      align-items: flex-end;
+      padding: 0;
+    }
+
+    .modal {
+      border-radius: 24px 24px 0 0;
+      max-height: 92vh;
+      max-width: 100%;
+      width: 100%;
+      padding: 20px 16px 24px;
+      overflow-y: auto;
+    }
+
+    .modal h2 { font-size: 18px; }
+
+    /* ── Forms ── */
+    .form-grid { grid-template-columns: 1fr; gap: 12px; }
+    .form-full { grid-column: 1; }
+
+    /* ── Profile layout — stack vertically ── */
+    .profile-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .profile-card-wrap {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .profile-big-card {
+      width: 140px;
+      flex-shrink: 0;
+    }
+
+    .profile-card-wrap > button,
+    .profile-card-wrap > .info-card {
+      display: none;
+    }
+
+    /* ── Attendance grid — 1 column ── */
+    .attendance-grid { grid-template-columns: 1fr; }
+
+    /* ── Session header ── */
+    .session-header { flex-direction: column; gap: 12px; }
+
+    /* ── History table — scroll ── */
+    .history-table { font-size: 12px; }
+    .history-table th, .history-table td { padding: 7px 8px; }
+
+    /* ── Export buttons ── */
+    .export-btns { grid-template-columns: 1fr; }
+
+    /* ── Login screen ── */
+    .login-box { padding: 16px; }
+    .login-ball { width: 60px; height: 60px; font-size: 28px; }
+    .login-logo h1 { font-size: 22px; }
+    .login-logo { margin-bottom: 24px; }
+    .login-card { padding: 20px 16px; }
+
+    /* ── Skill rows ── */
+    .skill-row { grid-template-columns: 70px 1fr 40px; }
+
+    /* ── Perf bar ── */
+    .perf-bar-row { grid-template-columns: 70px 1fr 32px; }
+
+    /* ── Info grid — 1 col on small ── */
+    .info-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    /* ── GS steps ── */
+    .gs-steps { padding: 12px; }
+    .gs-step { font-size: 12px; }
+  }
+
+  /* Extra small phones */
+  @media (max-width: 380px) {
+    .player-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .stats-banner { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .stat-val { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN SCREEN ── -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-ball">⚽</div>
+      <h1>فريق المستقبل</h1>
+      <p>Football Academy</p>
+    </div>
+    <div class="login-card">
+      <div class="login-tabs">
+        <button class="login-tab active" id="tab-admin" onclick="switchTab('admin')">🔐 مدرب / أدمن</button>
+        <button class="login-tab" id="tab-guest" onclick="switchTab('guest')">👁️ مشاهد</button>
+      </div>
+
+      <!-- Admin fields -->
+      <div id="admin-fields">
+        <div class="login-field">
+          <label>اسم المستخدم</label>
+          <input type="text" id="login-user" placeholder="admin" autocomplete="username">
+        </div>
+        <div class="login-field">
+          <label>كلمة المرور</label>
+          <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password"
+            onkeydown="if(event.key==='Enter') doLogin()">
+        </div>
+      </div>
+
+      <!-- Guest notice -->
+      <div id="guest-fields" style="display:none">
+        <div style="text-align:center;padding:20px 0 10px">
+          <div style="font-size:48px;margin-bottom:12px">👁️</div>
+          <div style="font-size:15px;font-weight:700;margin-bottom:6px">وضع المشاهدة</div>
+          <div style="font-size:13px;color:var(--text-muted);line-height:1.7">
+            يمكنك عرض اللاعبين وبطاقاتهم<br>وإحصائيات الأداء بدون تعديل
+          </div>
+        </div>
+      </div>
+
+      <div class="login-error" id="login-error">❌ اسم المستخدم أو كلمة المرور غير صحيحة</div>
+
+      <button class="btn-login" onclick="doLogin()">دخول ←</button>
+
+      <div class="guest-info" id="guest-note">
+        وضع الأدمن: يتيح إضافة لاعبين وتسجيل الأداء والحضور
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header id="main-header" style="display:none">
+  <div class="logo">
+    <div class="logo-icon">⚽</div>
+    <div>
+      <div class="logo-text">فريق المستقبل</div>
+      <div class="logo-sub">Football Academy</div>
+    </div>
+  </div>
+  <nav>
+    <button class="active" onclick="showView('dashboard')" id="nav-dashboard">
+      🏠 <span>الرئيسية</span>
+    </button>
+    <button onclick="showView('players')" id="nav-players">
+      👥 <span>اللاعبون</span>
+    </button>
+    <button onclick="showView('attendance')" id="nav-attendance" class="admin-only">
+      ✅ <span>الحضور</span>
+    </button>
+    <button onclick="showView('ratings')" id="nav-ratings" class="admin-only">
+      ⭐ <span>التقييمات</span>
+    </button>
+  </nav>
+  <div style="display:flex;align-items:center;gap:10px">
+    <button class="btn btn-outline admin-only" style="padding:8px 14px;font-size:13px" onclick="openSettings()">⚙️ <span>الإعدادات</span></button>
+    <div class="user-badge" id="user-badge-el" onclick="doLogout()">
+      <div class="user-avatar" id="user-avatar-el"></div>
+      <div>
+        <div class="user-name" id="user-name-el"></div>
+        <div class="user-role" id="user-role-el"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="app" id="main-app" style="display:none">
+
+  <!-- ── DASHBOARD ── -->
+  <div id="view-dashboard" class="view active">
+    <div class="stats-banner" id="stats-banner"></div>
+    <div id="potm-section"></div>
+    <div class="section-title">⚡ <span>أحدث التقييمات</span></div>
+    <div id="recent-ratings"></div>
+  </div>
+
+  <!-- ── PLAYERS ── -->
+  <div id="view-players" class="view">
+    <div class="section-title">👥 <span>اللاعبون</span></div>
+    <div class="toolbar">
+      <input class="search-box" type="text" placeholder="🔍  ابحث عن لاعب..." id="player-search" oninput="renderPlayers()">
+      <select class="filter-select" id="pos-filter" onchange="renderPlayers()">
+        <option value="">كل المراكز</option>
+        <option>حارس مرمى</option>
+        <option>مدافع</option>
+        <option>وسط</option>
+        <option>مهاجم</option>
+      </select>
+      <button class="btn btn-gold admin-only" onclick="openAddPlayer()">➕ إضافة لاعب</button>
+    </div>
+    <div id="players-grid" class="player-grid"></div>
+  </div>
+
+  <!-- ── ATTENDANCE ── -->
+  <div id="view-attendance" class="view">
+    <div class="section-title">✅ <span>تسجيل الحضور</span></div>
+    <div class="session-header">
+      <div class="progress-ring">
+        <svg width="64" height="64">
+          <circle cx="32" cy="32" r="26" stroke="rgba(255,255,255,0.08)" stroke-width="6" fill="none"/>
+          <circle id="att-ring" cx="32" cy="32" r="26" stroke="#10b981" stroke-width="6" fill="none"
+            stroke-dasharray="163" stroke-dashoffset="163" stroke-linecap="round"/>
+        </svg>
+        <div class="progress-ring-text" id="att-pct">0%</div>
+      </div>
+      <div style="flex:1">
+        <div style="font-size:18px;font-weight:800;margin-bottom:4px">جلسة اليوم</div>
+        <div id="att-date" style="color:var(--text-muted);font-size:13px"></div>
+        <div id="att-count" style="color:var(--green);font-size:13px;margin-top:4px">0 / 0 حاضر</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <select class="filter-select" id="att-type">
+          <option>تدريب</option>
+          <option>مباراة</option>
+        </select>
+        <button class="btn btn-gold" onclick="saveAttendance()">💾 حفظ الحضور</button>
+        <button class="btn btn-outline" onclick="selectAll()">✔ تحديد الكل</button>
+      </div>
+    </div>
+    <div id="attendance-list" class="attendance-grid"></div>
+  </div>
+
+  <!-- ── RATINGS ── -->
+  <div id="view-ratings" class="view">
+    <div class="section-title">⭐ <span>تقييم الأداء</span></div>
+    <div class="toolbar">
+      <select class="filter-select" id="rate-player" style="flex:1;min-width:200px">
+        <option value="">اختر لاعباً...</option>
+      </select>
+      <input type="date" class="filter-select" id="rate-date">
+      <select class="filter-select" id="rate-type">
+        <option>تدريب</option>
+        <option>مباراة</option>
+      </select>
+      <button class="btn btn-gold" onclick="openRatingModal()">➕ تقييم جديد</button>
+    </div>
+    <div id="ratings-list"></div>
+  </div>
+
+</div>
+
+<!-- ── PLAYER PROFILE MODAL ── -->
+<div class="modal-overlay" id="profile-modal">
+  <div class="modal" style="max-width:800px">
+    <button class="modal-close" onclick="closeModal('profile-modal')">✕</button>
+    <div id="profile-content"></div>
+  </div>
+</div>
+
+<!-- ── ADD PLAYER MODAL ── -->
+<div class="modal-overlay" id="add-player-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('add-player-modal')">✕</button>
+    <h2>➕ إضافة لاعب جديد</h2>
+    <div class="photo-upload-wrap">
+      <div class="photo-preview" onclick="document.getElementById('p-photo-input').click()">
+        <span id="p-photo-emoji">📷</span>
+        <img id="p-photo-preview" src="" style="display:none">
+        <div class="photo-overlay">✏️</div>
+      </div>
+      <label class="photo-label" onclick="document.getElementById('p-photo-input').click()">انقر لرفع صورة اللاعب</label>
+      <input type="file" id="p-photo-input" accept="image/*" onchange="previewPhoto('p-photo-input','p-photo-preview','p-photo-emoji')">
+    </div>
+    <div class="form-grid">
+      <div class="form-group form-full">
+        <label>الاسم الكامل</label>
+        <input type="text" id="p-name" placeholder="مثال: أحمد محمد">
+      </div>
+      <div class="form-group">
+        <label>العمر</label>
+        <input type="number" id="p-age" placeholder="14" min="5" max="40">
+      </div>
+      <div class="form-group">
+        <label>المركز</label>
+        <select id="p-pos">
+          <option>مهاجم</option>
+          <option>وسط</option>
+          <option>مدافع</option>
+          <option>حارس مرمى</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>رقم القميص</label>
+        <input type="number" id="p-number" placeholder="10" min="1" max="99">
+      </div>
+      <div class="form-group">
+        <label>الجنسية</label>
+        <input type="text" id="p-nationality" placeholder="عُماني">
+      </div>
+      <div class="form-group">
+        <label>رقم الجوال (الوالد)</label>
+        <input type="text" id="p-phone" placeholder="+968 9X XXX XXX">
+      </div>
+      <div class="form-group">
+        <label>اسم الوالد</label>
+        <input type="text" id="p-parent" placeholder="اسم ولي الأمر">
+      </div>
+      <div class="form-group">
+        <label>الفريق</label>
+        <select id="p-team">
+          <option>الفريق أ</option>
+          <option>الفريق ب</option>
+          <option>الفريق جـ</option>
+          <option>الناشئين</option>
+        </select>
+      </div>
+    </div>
+    <div class="skills-section">
+      <h3>المهارات الابتدائية (1-10)</h3>
+      <div id="initial-skills">
+        <div class="skill-row">
+          <div class="skill-label">السرعة</div>
+          <input type="range" class="skill-slider" id="sk-speed" min="1" max="10" value="5" oninput="this.nextElementSibling.textContent=this.value">
+          <div class="skill-val">5</div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-label">التمرير</div>
+          <input type="range" class="skill-slider" id="sk-passing" min="1" max="10" value="5" oninput="this.nextElementSibling.textContent=this.value">
+          <div class="skill-val">5</div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-label">التسديد</div>
+          <input type="range" class="skill-slider" id="sk-shooting" min="1" max="10" value="5" oninput="this.nextElementSibling.textContent=this.value">
+          <div class="skill-val">5</div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-label">المراوغة</div>
+          <input type="range" class="skill-slider" id="sk-dribbling" min="1" max="10" value="5" oninput="this.nextElementSibling.textContent=this.value">
+          <div class="skill-val">5</div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-label">الدفاع</div>
+          <input type="range" class="skill-slider" id="sk-defense" min="1" max="10" value="5" oninput="this.nextElementSibling.textContent=this.value">
+          <div class="skill-val">5</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:12px;margin-top:24px;justify-content:flex-end">
+      <button class="btn btn-outline" onclick="closeModal('add-player-modal')">إلغاء</button>
+      <button class="btn btn-gold" onclick="savePlayer()">💾 حفظ اللاعب</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── RATING MODAL ── -->
+<div class="modal-overlay" id="rating-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('rating-modal')">✕</button>
+    <h2>⭐ تقييم أداء اللاعب</h2>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>اللاعب</label>
+        <select id="rm-player"></select>
+      </div>
+      <div class="form-group">
+        <label>التاريخ</label>
+        <input type="date" id="rm-date">
+      </div>
+      <div class="form-group">
+        <label>نوع الجلسة</label>
+        <select id="rm-type">
+          <option>تدريب</option>
+          <option>مباراة</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>التقييم العام (1-10)</label>
+        <input type="number" id="rm-overall" min="1" max="10" value="7" step="0.5">
+      </div>
+    </div>
+    <div class="skills-section">
+      <h3>تقييم المهارات</h3>
+      <div class="skill-row">
+        <div class="skill-label">السرعة</div>
+        <input type="range" class="skill-slider" id="rm-speed" min="1" max="10" value="5" oninput="this.nextElementSibling.textContent=this.value">
+        <div class="skill-val">5</div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-label">التمرير</div>
+        <input type="range" class="skill-slider" id="rm-passing" min="1" max="10" value="5" oninput="this.nextElementSibling.textContent=this.value">
+        <div class="skill-val">5</div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-label">التسديد</div>
+        <input type="range" class="skill-slider" id="rm-shooting" min="1" max="10" value="5" oninput="this.nextElementSibling.textContent=this.value">
+        <div class="skill-val">5</div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-label">المراوغة</div>
+        <input type="range" class="skill-slider" id="rm-dribbling" min="1" max="10" value="5" oninput="this.nextElementSibling.textContent=this.value">
+        <div class="skill-val">5</div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-label">الدفاع</div>
+        <input type="range" class="skill-slider" id="rm-defense" min="1" max="10" value="5" oninput="this.nextElementSibling.textContent=this.value">
+        <div class="skill-val">5</div>
+      </div>
+    </div>
+    <div class="form-group" style="margin-top:16px">
+      <label>ملاحظات المدرب</label>
+      <textarea id="rm-note" placeholder="اكتب ملاحظاتك عن أداء اللاعب..."></textarea>
+    </div>
+    <div style="display:flex;gap:12px;margin-top:24px;justify-content:flex-end">
+      <button class="btn btn-outline" onclick="closeModal('rating-modal')">إلغاء</button>
+      <button class="btn btn-gold" onclick="saveRating()">💾 حفظ التقييم</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── EXPORT CARD MODAL ── -->
+<div class="modal-overlay" id="export-modal">
+  <div class="modal" style="max-width:480px">
+    <button class="modal-close" onclick="closeModal('export-modal')">✕</button>
+    <h2>🖼️ حفظ بطاقة اللاعب</h2>
+    <div class="export-preview-wrap">
+      <div id="export-card-render"></div>
+    </div>
+    <div class="export-btns">
+      <button class="btn-export btn-export-png" onclick="exportCardPNG()">
+        <span id="png-spinner" class="spinner"></span>
+        🖼️ حفظ PNG
+      </button>
+      <button class="btn-export btn-export-pdf" onclick="exportCardPDF()">
+        <span id="pdf-spinner" class="spinner"></span>
+        📄 حفظ PDF
+      </button>
+    </div>
+    <p style="text-align:center;font-size:12px;color:var(--text-muted);margin-top:14px">
+      الصورة تُحفظ بجودة عالية تناسب المشاركة على واتساب وتويتر
+    </p>
+  </div>
+</div>
+
+<!-- ── SETTINGS MODAL ── -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal" style="max-width:560px">
+    <button class="modal-close" onclick="closeModal('settings-modal')">✕</button>
+    <h2>⚙️ الإعدادات</h2>
+    <div class="settings-tabs">
+      <button class="settings-tab active" onclick="switchSettingsTab('gsheets')">📊 Google Sheets</button>
+      <button class="settings-tab" onclick="switchSettingsTab('account')">🔐 الحساب</button>
+    </div>
+
+    <!-- Google Sheets Tab -->
+    <div class="settings-section active" id="stab-gsheets">
+      <div class="gs-status disconnected" id="gs-status-bar">
+        <div class="gs-dot off" id="gs-dot"></div>
+        <span id="gs-status-text">غير متصل بـ Google Sheets</span>
+      </div>
+
+      <div class="gs-steps">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px">📋 خطوات الربط:</div>
+        <div class="gs-step">
+          <div class="gs-step-num">1</div>
+          <div>افتح <a href="https://sheets.google.com" target="_blank">Google Sheets</a> وأنشئ جدول جديد باسم <strong style="color:var(--gold)">فريق المستقبل</strong></div>
+        </div>
+        <div class="gs-step">
+          <div class="gs-step-num">2</div>
+          <div>من القائمة: <strong style="color:var(--gold)">Extensions → Apps Script</strong> — والصق الكود أدناه ثم اضغط Deploy → Web App</div>
+        </div>
+        <div class="gs-step">
+          <div class="gs-step-num">3</div>
+          <div>اختر <strong style="color:var(--gold)">"Anyone"</strong> في Execute as، ثم انسخ رابط الـ Web App والصقه في الحقل أدناه</div>
+        </div>
+      </div>
+
+      <!-- Apps Script Code -->
+      <div style="position:relative;margin-bottom:16px">
+        <div style="font-size:12px;font-weight:700;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">كود Apps Script</div>
+        <pre id="gs-code-block" style="background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;font-size:11px;color:#a8d8ff;overflow-x:auto;white-space:pre;direction:ltr;font-family:monospace;max-height:160px;overflow-y:auto"></pre>
+        <button class="btn btn-outline" style="margin-top:8px;font-size:12px;padding:6px 14px" onclick="copyAppsScript()">📋 نسخ الكود</button>
+      </div>
+
+      <div class="form-group" style="margin-bottom:12px">
+        <label>رابط Web App</label>
+        <input type="text" id="gs-url-input" placeholder="https://script.google.com/macros/s/..." style="direction:ltr">
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-gold" onclick="connectGSheets()">🔗 ربط وتزامن</button>
+        <button class="btn btn-outline" onclick="syncFromSheets()" id="gs-sync-btn" style="display:none">🔄 تزامن الآن</button>
+        <button class="btn btn-red" onclick="disconnectGSheets()" id="gs-disconnect-btn" style="display:none">❌ فصل الربط</button>
+      </div>
+
+      <div class="gs-sync-bar" id="gs-last-sync" style="display:none">
+        🕒 آخر تزامن: <span id="gs-sync-time">—</span>
+      </div>
+    </div>
+
+    <!-- Account Tab -->
+    <div class="settings-section" id="stab-account">
+      <div class="info-card" style="margin-bottom:16px">
+        <h3>بيانات الدخول الحالية</h3>
+        <div class="info-grid">
+          <div class="info-item"><label>يوزرنيم</label><span>admin</span></div>
+          <div class="info-item"><label>الدور</label><span style="color:var(--gold)">مدرب / أدمن</span></div>
+        </div>
+      </div>
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px">تغيير كلمة المرور</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>كلمة المرور الجديدة</label>
+          <input type="password" id="new-pass1" placeholder="••••••••">
+        </div>
+        <div class="form-group">
+          <label>تأكيد كلمة المرور</label>
+          <input type="password" id="new-pass2" placeholder="••••••••">
+        </div>
+      </div>
+      <button class="btn btn-gold" style="margin-top:12px" onclick="changePassword()">💾 حفظ كلمة المرور</button>
+      <p style="font-size:11px;color:var(--text-muted);margin-top:8px">⚠️ تغيير كلمة المرور يطبق على هذا الجهاز فقط</p>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✅ تم الحفظ بنجاح</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+// ══════════════════════════════════════
+//  AUTH SYSTEM
+// ══════════════════════════════════════
+const ADMIN_USER = 'admin';
+const ADMIN_PASS = 'abood';
+
+let currentRole = null; // 'admin' | 'guest'
+let loginTab = 'admin';
+
+function switchTab(tab) {
+  loginTab = tab;
+  document.getElementById('tab-admin').classList.toggle('active', tab === 'admin');
+  document.getElementById('tab-guest').classList.toggle('active', tab === 'guest');
+  document.getElementById('admin-fields').style.display = tab === 'admin' ? '' : 'none';
+  document.getElementById('guest-fields').style.display = tab === 'guest' ? '' : 'none';
+  document.getElementById('guest-note').style.display = tab === 'admin' ? '' : 'none';
+  document.getElementById('login-error').classList.remove('show');
+  const btn = document.querySelector('.btn-login');
+  btn.textContent = tab === 'admin' ? 'دخول كمدرب ←' : 'دخول للمشاهدة ←';
+}
+
+function doLogin() {
+  if (loginTab === 'guest') {
+    enterApp('guest');
+    return;
+  }
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  if (u === ADMIN_USER && p === ADMIN_PASS) {
+    enterApp('admin');
+  } else {
+    document.getElementById('login-error').classList.add('show');
+    document.getElementById('login-pass').value = '';
+    document.getElementById('login-pass').focus();
+  }
+}
+
+async function enterApp(role) {
+  currentRole = role;
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('main-header').style.display = 'flex';
+  document.getElementById('main-app').style.display = 'block';
+
+  // Apply role classes
+  if (role === 'admin') {
+    document.body.classList.add('is-admin');
+    document.getElementById('user-avatar-el').className = 'user-avatar admin-av';
+    document.getElementById('user-avatar-el').textContent = 'م';
+    document.getElementById('user-name-el').textContent = 'المدرب / أدمن';
+    document.getElementById('user-role-el').textContent = 'صلاحيات كاملة';
+  } else {
+    document.body.classList.remove('is-admin');
+    document.getElementById('user-avatar-el').className = 'user-avatar guest-av';
+    document.getElementById('user-avatar-el').textContent = '👁';
+    document.getElementById('user-name-el').textContent = 'زائر';
+    document.getElementById('user-role-el').textContent = 'وضع المشاهدة';
+  }
+
+  // ── Auto-sync from Google Sheets on open ──
+  gsUrl = localStorage.getItem('gs_url') || 'https://script.google.com/macros/s/AKfycby84-QhGJgVXbU6zAFiPWQ-4DX52kubFyqRCH4gELTgCBdrbgRZm1yDJv9kWlII_7MujQ/exec';
+  if (gsUrl) {
+    showToast('🔄 جاري مزامنة البيانات...');
+    try {
+      // جلب البيانات من الشيت
+      const res = await fetch(gsUrl + '?t=' + Date.now());
+      const text = await res.text();
+      const remote = JSON.parse(text);
+
+      if (remote && remote.players) {
+        // ── دمج ذكي: الأحدث يفوز ──
+        const localData = data;
+
+        // اجمع كل اللاعبين من المحلي والشيت
+        const mergedPlayers = [...remote.players];
+        localData.players.forEach(localP => {
+          const existsInRemote = mergedPlayers.find(r => r.id === localP.id);
+          if (!existsInRemote) {
+            // لاعب موجود محلياً لكن غير موجود في الشيت — أضفه
+            mergedPlayers.push(localP);
+          }
+        });
+
+        // اجمع التقييمات
+        const remoteRatingIds = new Set((remote.ratings||[]).map(r => r.id));
+        const localOnlyRatings = localData.ratings.filter(r => !remoteRatingIds.has(r.id));
+        const mergedRatings = [...(remote.ratings||[]), ...localOnlyRatings];
+
+        // اجمع الحضور
+        const remoteAttDates = new Set((remote.attendance||[]).map(a => a.date + a.type));
+        const localOnlyAtt = localData.attendance.filter(a => !remoteAttDates.has(a.date + a.type));
+        const mergedAtt = [...(remote.attendance||[]), ...localOnlyAtt];
+
+        // احتفظ بالصور المحلية
+        const photoMap = {};
+        localData.players.forEach(p => { if (p.photo) photoMap[p.id] = p.photo; });
+        data.players = mergedPlayers.map(p => ({ ...p, photo: photoMap[p.id] || p.photo || null }));
+        data.ratings = mergedRatings;
+        data.attendance = mergedAtt;
+        nextPlayerId = Math.max(...data.players.map(p => p.id), 0) + 1;
+        nextRatingId = Math.max(...data.ratings.map(r => r.id), 0) + 1;
+
+        // احفظ محلياً
+        localStorage.setItem('academy_data', JSON.stringify(data));
+
+        // ارسل البيانات المدمجة للشيت لتحديثه
+        gsConnected = true;
+        pushToSheets(gsUrl);
+
+        showToast('✅ تمت المزامنة — ' + data.players.length + ' لاعب');
+      } else {
+        // الشيت فارغ — ارسل البيانات المحلية له
+        gsConnected = true;
+        pushToSheets(gsUrl);
+        showToast('☁️ تم رفع بياناتك للشيت');
+      }
+    } catch(e) {
+      console.warn('Auto-sync failed:', e);
+      // فشل الاتصال — استمر بالبيانات المحلية وحاول الإرسال
+      gsConnected = false;
+      showToast('📴 لا يوجد إنترنت — البيانات المحلية محفوظة');
+    }
+  }
+
+  renderDashboard();
+  showView('dashboard');
+}
+
+function doLogout() {
+  if (!confirm('هل تريد تسجيل الخروج؟')) return;
+  currentRole = null;
+  document.body.classList.remove('is-admin');
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('main-header').style.display = 'none';
+  document.getElementById('main-app').style.display = 'none';
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
+  document.getElementById('login-error').classList.remove('show');
+  loginTab = 'admin';
+  switchTab('admin');
+}
+
+function requireAdmin(action) {
+  if (currentRole !== 'admin') {
+    showToast('🔐 هذه الميزة للمدرب فقط');
+    return false;
+  }
+  return true;
+}
+
+// ── DATA ──
+let data = JSON.parse(localStorage.getItem('academy_data') || 'null') || {
+  players: [
+    { id:1, name:'أحمد محمد', age:16, pos:'مهاجم', number:9, nationality:'عُماني', phone:'+968 91234567', parent:'محمد علي', team:'الفريق أ', skills:{speed:9,passing:7,shooting:8,dribbling:7,defense:4} },
+    { id:2, name:'سالم الحارثي', age:15, pos:'وسط', number:8, nationality:'عُماني', phone:'+968 92345678', parent:'خالد الحارثي', team:'الفريق أ', skills:{speed:7,passing:8,shooting:6,dribbling:8,defense:6} },
+    { id:3, name:'خالد البلوشي', age:17, pos:'مدافع', number:5, nationality:'عُماني', phone:'+968 93456789', parent:'سيف البلوشي', team:'الفريق ب', skills:{speed:6,passing:6,shooting:4,dribbling:5,defense:9} },
+    { id:4, name:'يوسف الريامي', age:14, pos:'حارس مرمى', number:1, nationality:'عُماني', phone:'+968 94567890', parent:'ناصر الريامي', team:'الفريق ب', skills:{speed:5,passing:4,shooting:3,dribbling:4,defense:9} },
+    { id:5, name:'راشد المعمري', age:15, pos:'مهاجم', number:11, nationality:'عُماني', phone:'+968 95678901', parent:'فيصل المعمري', team:'الفريق أ', skills:{speed:8,passing:7,shooting:7,dribbling:8,defense:3} },
+  ],
+  ratings: [
+    { id:1, playerId:1, date:'2025-04-15', type:'تدريب', overall:8.5, skills:{speed:9,passing:7,shooting:8,dribbling:8,defense:4}, note:'أداء ممتاز، تحسن واضح في التسديد' },
+    { id:2, playerId:2, date:'2025-04-15', type:'تدريب', overall:7.0, skills:{speed:7,passing:8,shooting:6,dribbling:7,defense:6}, note:'جيد في التمرير، يحتاج تطوير في السرعة' },
+    { id:3, playerId:5, date:'2025-04-15', type:'تدريب', overall:7.5, skills:{speed:8,passing:7,shooting:7,dribbling:8,defense:3}, note:'مثابر وسريع' },
+    { id:4, playerId:1, date:'2025-04-10', type:'مباراة', overall:9.0, skills:{speed:9,passing:8,shooting:9,dribbling:8,defense:4}, note:'نجم المباراة، أحرز هدفين' },
+  ],
+  attendance: []
+};
+
+let nextPlayerId = Math.max(...data.players.map(p=>p.id), 0) + 1;
+let nextRatingId = Math.max(...data.ratings.map(r=>r.id), 0) + 1;
+let todayAttendance = {};
+
+function save() { localStorage.setItem('academy_data', JSON.stringify(data)); }
+
+// ── UTILS ──
+function getPlayerRating(id) {
+  const rs = data.ratings.filter(r => r.playerId === id);
+  if (!rs.length) return null;
+  return rs[rs.length-1].overall;
+}
+
+function getCardClass(rating) {
+  if (rating >= 8.5) return 'potm-card';
+  if (rating >= 7.0) return 'gold-card';
+  if (rating >= 5.5) return 'silver-card';
+  return 'bronze-card';
+}
+
+function getOverallFromSkills(skills) {
+  const vals = Object.values(skills);
+  return (vals.reduce((a,b)=>a+b,0)/vals.length*10).toFixed(0);
+}
+
+function getAvatarEmoji(pos) {
+  return { 'مهاجم':'⚡', 'وسط':'🎯', 'مدافع':'🛡️', 'حارس مرمى':'🥅' }[pos] || '⚽';
+}
+
+function formatDate(d) {
+  if (!d) return '';
+  const dt = new Date(d);
+  return dt.toLocaleDateString('ar-EG', { year:'numeric', month:'long', day:'numeric' });
+}
+
+// ── CARD HTML ──
+function buildCard(player, small=false) {
+  const rating = getPlayerRating(player.id);
+  const ratingVal = rating ? rating.toFixed(1) : getOverallFromSkills(player.skills);
+  const cls = rating ? getCardClass(rating) : 'silver-card';
+  const s = player.skills;
+  const posMap = {'مهاجم':'FW','وسط':'MF','مدافع':'DF','حارس مرمى':'GK'};
+  const flagMap = {'عُماني':'🇴🇲','سعودي':'🇸🇦','إماراتي':'🇦🇪','كويتي':'🇰🇼','بحريني':'🇧🇭','قطري':'🇶🇦','يمني':'🇾🇪'};
+  const flag = flagMap[player.nationality] || '🏳️';
+  const photoHTML = player.photo
+    ? `<img src="${player.photo}">`
+    : `<div class="card-no-photo">${getAvatarEmoji(player.pos)}</div>`;
+
+  return `
+    <div class="fifa-card ${cls} ${small?'potm-card-small':''}" onclick="openProfile(${player.id})">
+      <div class="card-shell">
+        <div class="card-streaks"></div>
+
+        <!-- PHOTO fills top 62% -->
+        <div class="card-photo-zone">
+          ${photoHTML}
+          <div class="card-photo-fade"></div>
+        </div>
+
+        <!-- Rating top-left -->
+        <div class="card-rating-block">
+          <div class="card-rating">${ratingVal}</div>
+          <div class="card-pos">${posMap[player.pos]||'MF'}</div>
+        </div>
+
+        <!-- Flag + club top-right -->
+        <div class="card-badge-block">
+          <div class="card-flag">${flag}</div>
+          <div class="card-club">⚽</div>
+        </div>
+
+        <!-- Bottom info -->
+        <div class="card-info-zone">
+          <div class="card-potm-label">★ لاعب الشهر ★</div>
+          <div class="card-name">${player.name}</div>
+          <div class="card-divider"></div>
+          <div class="card-stats">
+            <div class="card-stat">
+              <div class="card-stat-num">${s.speed}</div>
+              <div class="card-stat-lbl">سرعة</div>
+            </div>
+            <div class="card-stat">
+              <div class="card-stat-num">${s.shooting}</div>
+              <div class="card-stat-lbl">تسديد</div>
+            </div>
+            <div class="card-stat">
+              <div class="card-stat-num">${s.passing}</div>
+              <div class="card-stat-lbl">تمرير</div>
+            </div>
+            <div class="card-stat">
+              <div class="card-stat-num">${s.dribbling}</div>
+              <div class="card-stat-lbl">مراوغة</div>
+            </div>
+            <div class="card-stat">
+              <div class="card-stat-num">${s.defense}</div>
+              <div class="card-stat-lbl">دفاع</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ── VIEWS ──
+function showView(name) {
+  // Guest cannot access attendance or ratings
+  if (currentRole === 'guest' && (name === 'attendance' || name === 'ratings')) {
+    showToast('🔐 هذا القسم للمدرب فقط');
+    return;
+  }
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  document.getElementById('nav-' + name)?.classList.add('active');
+  if (name === 'players') renderPlayers();
+  if (name === 'attendance') renderAttendance();
+  if (name === 'ratings') renderRatings();
+  if (name === 'dashboard') renderDashboard();
+}
+
+// ── DASHBOARD ──
+function renderDashboard() {
+  const total = data.players.length;
+  const thisMonth = data.ratings.filter(r => r.date && r.date.startsWith(new Date().toISOString().slice(0,7)));
+  const avgRating = thisMonth.length ? (thisMonth.reduce((a,b)=>a+b.overall,0)/thisMonth.length).toFixed(1) : '—';
+  const sessions = [...new Set(data.attendance.map(a=>a.date))].length;
+
+  document.getElementById('stats-banner').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-icon">👥</div>
+      <div class="stat-val" style="color:var(--gold)">${total}</div>
+      <div class="stat-label">إجمالي اللاعبين</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">⭐</div>
+      <div class="stat-val" style="color:var(--blue-glow)">${avgRating}</div>
+      <div class="stat-label">متوسط التقييم هذا الشهر</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">📋</div>
+      <div class="stat-val" style="color:var(--green)">${data.ratings.length}</div>
+      <div class="stat-label">إجمالي التقييمات</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">📅</div>
+      <div class="stat-val" style="color:var(--purple)">${sessions}</div>
+      <div class="stat-label">جلسات الحضور المسجلة</div>
+    </div>`;
+
+  // POTM
+  const playerRatings = data.players.map(p => {
+    const rs = data.ratings.filter(r => r.playerId === p.id);
+    return { player: p, avg: rs.length ? rs.reduce((a,b)=>a+b.overall,0)/rs.length : 0 };
+  }).filter(x => x.avg > 0).sort((a,b) => b.avg - a.avg);
+
+  if (playerRatings.length) {
+    const potm = playerRatings[0];
+    document.getElementById('potm-section').innerHTML = `
+      <div class="potm-section">
+        ${buildCard(potm.player)}
+        <div class="potm-info">
+          <h2>🏆 لاعب الشهر</h2>
+          <h3>${potm.player.name}</h3>
+          <p>${potm.player.pos} • ${potm.player.team}</p>
+          <p style="margin-top:12px;color:var(--gold);font-size:22px;font-weight:900">${potm.avg.toFixed(1)} ⭐</p>
+          <p style="margin-top:4px;color:var(--text-muted)">متوسط التقييم الكلي</p>
+        </div>
+      </div>`;
+  } else {
+    document.getElementById('potm-section').innerHTML = '';
+  }
+
+  // Recent ratings
+  const recent = [...data.ratings].reverse().slice(0, 6);
+  if (!recent.length) {
+    document.getElementById('recent-ratings').innerHTML = `
+      <div class="empty-state">
+        <div class="icon">📊</div>
+        <h3>لا توجد تقييمات بعد</h3>
+        <p>ابدأ بتسجيل أداء اللاعبين</p>
+        <button class="btn btn-gold" onclick="showView('ratings')">إضافة تقييم ➜</button>
+      </div>`;
+    return;
+  }
+
+  document.getElementById('recent-ratings').innerHTML = `
+    <div style="background:var(--navy2);border:1px solid rgba(255,255,255,0.08);border-radius:16px;overflow:hidden">
+      <table class="history-table">
+        <thead><tr>
+          <th>اللاعب</th><th>التاريخ</th><th>النوع</th><th>التقييم</th><th>الملاحظة</th>
+        </tr></thead>
+        <tbody>
+          ${recent.map(r => {
+            const p = data.players.find(x=>x.id===r.playerId);
+            return `<tr>
+              <td><strong>${p?.name||'—'}</strong></td>
+              <td style="color:var(--text-muted)">${formatDate(r.date)}</td>
+              <td><span class="badge ${r.type==='مباراة'?'badge-gold':'badge-blue'}">${r.type}</span></td>
+              <td><span style="font-size:18px;font-weight:900;color:${r.overall>=8?'var(--gold)':r.overall>=6?'var(--green)':'var(--text-muted)'}">${r.overall}</span></td>
+              <td style="color:var(--text-muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.note||'—'}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+// ── PLAYERS ──
+function renderPlayers() {
+  const q = document.getElementById('player-search')?.value.toLowerCase()||'';
+  const pos = document.getElementById('pos-filter')?.value||'';
+  let players = data.players.filter(p =>
+    p.name.toLowerCase().includes(q) &&
+    (!pos || p.pos === pos)
+  );
+
+  const grid = document.getElementById('players-grid');
+  if (!players.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+      <div class="icon">👥</div>
+      <h3>لا يوجد لاعبون</h3>
+      <p>أضف أول لاعب في الأكاديمية</p>
+      <button class="btn btn-gold" onclick="openAddPlayer()">➕ إضافة لاعب</button>
+    </div>`;
+    return;
+  }
+  grid.innerHTML = players.map(p => buildCard(p)).join('');
+}
+
+// ── PHOTO HELPER ──
+function previewPhoto(inputId, previewId, emojiId) {
+  const file = document.getElementById(inputId).files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById(previewId);
+    img.src = e.target.result;
+    img.style.display = 'block';
+    const em = document.getElementById(emojiId);
+    if (em) em.style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function getPhotoBase64(inputId) {
+  return new Promise(resolve => {
+    const file = document.getElementById(inputId)?.files[0];
+    if (!file) { resolve(null); return; }
+    const reader = new FileReader();
+    reader.onload = e => resolve(e.target.result);
+    reader.readAsDataURL(file);
+  });
+}
+
+// ── ADD PLAYER ──
+function openAddPlayer() {
+  if (!requireAdmin()) return;
+  document.getElementById('p-name').value='';
+  document.getElementById('p-age').value='';
+  document.getElementById('p-number').value='';
+  document.getElementById('p-nationality').value='عُماني';
+  document.getElementById('p-phone').value='';
+  document.getElementById('p-parent').value='';
+  // Reset photo
+  document.getElementById('p-photo-input').value='';
+  document.getElementById('p-photo-preview').src='';
+  document.getElementById('p-photo-preview').style.display='none';
+  document.getElementById('p-photo-emoji').style.display='';
+  ['speed','passing','shooting','dribbling','defense'].forEach(s => {
+    const el = document.getElementById('sk-'+s);
+    el.value = 5;
+    el.nextElementSibling.textContent = '5';
+  });
+  openModal('add-player-modal');
+}
+
+async function savePlayer() {
+  const name = document.getElementById('p-name').value.trim();
+  if (!name) { showToast('⚠️ يرجى إدخال اسم اللاعب'); return; }
+  const photo = await getPhotoBase64('p-photo-input');
+  const player = {
+    id: nextPlayerId++,
+    name,
+    photo: photo || null,
+    age: parseInt(document.getElementById('p-age').value)||14,
+    pos: document.getElementById('p-pos').value,
+    number: parseInt(document.getElementById('p-number').value)||0,
+    nationality: document.getElementById('p-nationality').value||'عُماني',
+    phone: document.getElementById('p-phone').value,
+    parent: document.getElementById('p-parent').value,
+    team: document.getElementById('p-team').value,
+    skills: {
+      speed: parseInt(document.getElementById('sk-speed').value),
+      passing: parseInt(document.getElementById('sk-passing').value),
+      shooting: parseInt(document.getElementById('sk-shooting').value),
+      dribbling: parseInt(document.getElementById('sk-dribbling').value),
+      defense: parseInt(document.getElementById('sk-defense').value),
+    }
+  };
+  data.players.push(player);
+  save();
+  closeModal('add-player-modal');
+  renderPlayers();
+  renderDashboard();
+  showToast('✅ تم إضافة اللاعب ' + name);
+}
+
+// ── PROFILE ──
+function openProfile(id) {
+  const p = data.players.find(x=>x.id===id);
+  if (!p) return;
+  const rs = data.ratings.filter(r=>r.playerId===id);
+  const lastR = rs[rs.length-1];
+  const skills = lastR ? lastR.skills : p.skills;
+  const attCount = data.attendance.filter(a=>a.players&&a.players.includes(id)).length;
+
+  const barColors = ['#f5c518','#3b82f6','#10b981','#7c3aed','#ef4444'];
+  const skillLabels = ['السرعة','التمرير','التسديد','المراوغة','الدفاع'];
+  const skillKeys = ['speed','passing','shooting','dribbling','defense'];
+
+  document.getElementById('profile-content').innerHTML = `
+    <h2>👤 ملف اللاعب</h2>
+    <div class="profile-layout">
+      <div class="profile-card-wrap">
+        <div style="position:relative">
+          ${buildCard(p, false).replace(`onclick="openProfile(${p.id})"`, '')}
+          <input type="file" id="profile-photo-input-${p.id}" accept="image/*" onchange="changePlayerPhoto(${p.id}, this)" style="display:none">
+        </div>
+        <button class="btn btn-outline" style="width:100%;justify-content:center" onclick="document.getElementById('profile-photo-input-${p.id}').click()">📷 تغيير الصورة</button>
+        <div class="info-card">
+          <h3>إحصائيات</h3>
+          <div class="info-grid">
+            <div class="info-item"><label>التقييمات</label><span style="color:var(--gold)">${rs.length}</span></div>
+            <div class="info-item"><label>جلسات الحضور</label><span style="color:var(--green)">${attCount}</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="profile-info">
+        <div class="info-card">
+          <h3>بيانات اللاعب</h3>
+          <div class="info-grid">
+            <div class="info-item"><label>الاسم</label><span>${p.name}</span></div>
+            <div class="info-item"><label>العمر</label><span>${p.age} سنة</span></div>
+            <div class="info-item"><label>المركز</label><span>${p.pos}</span></div>
+            <div class="info-item"><label>رقم القميص</label><span>#${p.number}</span></div>
+            <div class="info-item"><label>الفريق</label><span>${p.team}</span></div>
+            <div class="info-item"><label>الجنسية</label><span>${p.nationality||'—'}</span></div>
+            <div class="info-item"><label>ولي الأمر</label><span>${p.parent||'—'}</span></div>
+            <div class="info-item"><label>الجوال</label><span>${p.phone||'—'}</span></div>
+          </div>
+        </div>
+        <div class="info-card">
+          <h3>مستوى المهارات</h3>
+          <div class="perf-bars">
+            ${skillKeys.map((k,i)=>`
+              <div class="perf-bar-row">
+                <div class="perf-bar-label">${skillLabels[i]}</div>
+                <div class="perf-bar-track">
+                  <div class="perf-bar-fill" style="width:${skills[k]*10}%;background:${barColors[i]}"></div>
+                </div>
+                <div class="perf-bar-val" style="color:${barColors[i]}">${skills[k]}</div>
+              </div>`).join('')}
+          </div>
+        </div>
+        ${rs.length ? `
+        <div class="info-card">
+          <h3>آخر التقييمات</h3>
+          <table class="history-table">
+            <thead><tr><th>التاريخ</th><th>النوع</th><th>التقييم</th><th>الملاحظة</th></tr></thead>
+            <tbody>
+              ${[...rs].reverse().slice(0,5).map(r=>`
+                <tr>
+                  <td style="color:var(--text-muted)">${formatDate(r.date)}</td>
+                  <td><span class="badge ${r.type==='مباراة'?'badge-gold':'badge-blue'}">${r.type}</span></td>
+                  <td><strong style="color:${r.overall>=8?'var(--gold)':r.overall>=6?'var(--green)':'var(--text-muted)'}">${r.overall}</strong></td>
+                  <td style="color:var(--text-muted);font-size:12px">${r.note||'—'}</td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>` : ''}
+      </div>
+    </div>
+    <div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap">
+      <button class="btn btn-gold admin-only" onclick="closeModal('profile-modal');showView('ratings');setTimeout(()=>{document.getElementById('rate-player').value=${id};openRatingModal();},100)">⭐ تقييم الآن</button>
+      <button class="btn btn-blue" onclick="openExportCard(${id})">🖼️ حفظ البطاقة</button>
+      <button class="btn btn-red admin-only" onclick="deletePlayer(${id})">🗑️ حذف اللاعب</button>
+    </div>`;
+
+  openModal('profile-modal');
+}
+
+function changePlayerPhoto(id, input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const p = data.players.find(x=>x.id===id);
+    if (!p) return;
+    p.photo = e.target.result;
+    save();
+    // Update img in current profile view immediately
+    const img = input.previousElementSibling?.querySelector('img') || input.previousElementSibling;
+    if (img && img.tagName === 'IMG') {
+      img.src = e.target.result;
+    } else {
+      // re-render avatar area
+      const avatarEl = document.getElementById('profile-photo-input-'+id)?.previousElementSibling?.previousElementSibling;
+      if (avatarEl) avatarEl.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"><div class="photo-overlay">✏️</div>`;
+    }
+    renderPlayers();
+    renderDashboard();
+    showToast('✅ تم تحديث صورة اللاعب');
+  };
+  reader.readAsDataURL(file);
+}
+
+function deletePlayer(id) {
+  if (!confirm('هل أنت متأكد من حذف هذا اللاعب؟')) return;
+  data.players = data.players.filter(p=>p.id!==id);
+  data.ratings = data.ratings.filter(r=>r.playerId!==id);
+  save();
+  closeModal('profile-modal');
+  renderPlayers();
+  renderDashboard();
+  showToast('🗑️ تم حذف اللاعب');
+}
+
+// ── ATTENDANCE ──
+function renderAttendance() {
+  const now = new Date();
+  document.getElementById('att-date').textContent = now.toLocaleDateString('ar-EG', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  const list = document.getElementById('attendance-list');
+  if (!data.players.length) {
+    list.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+      <div class="icon">👥</div><h3>لا يوجد لاعبون</h3>
+      <p>أضف لاعبين أولاً</p>
+      <button class="btn btn-gold" onclick="showView('players')">إضافة لاعب ➜</button>
+    </div>`;
+    return;
+  }
+
+  list.innerHTML = data.players.map(p => `
+    <div class="attendance-card" onclick="toggleAtt(${p.id})" id="att-card-${p.id}">
+      <div class="att-avatar" style="overflow:hidden">
+        ${p.photo ? `<img src="${p.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">` : getAvatarEmoji(p.pos)}
+      </div>
+      <div class="att-info">
+        <div class="att-name">${p.name}</div>
+        <div class="att-meta">${p.pos} • ${p.team} • #${p.number}</div>
+      </div>
+      <div class="att-check ${todayAttendance[p.id]?'checked':''}" id="att-chk-${p.id}">
+        ${todayAttendance[p.id]?'✓':''}
+      </div>
+    </div>`).join('');
+
+  updateAttRing();
+}
+
+function toggleAtt(id) {
+  todayAttendance[id] = !todayAttendance[id];
+  const chk = document.getElementById('att-chk-'+id);
+  chk.classList.toggle('checked', todayAttendance[id]);
+  chk.textContent = todayAttendance[id] ? '✓' : '';
+  updateAttRing();
+}
+
+function selectAll() {
+  const allChecked = data.players.every(p => todayAttendance[p.id]);
+  data.players.forEach(p => {
+    todayAttendance[p.id] = !allChecked;
+    const chk = document.getElementById('att-chk-'+p.id);
+    if (chk) {
+      chk.classList.toggle('checked', !allChecked);
+      chk.textContent = !allChecked ? '✓' : '';
+    }
+  });
+  updateAttRing();
+}
+
+function updateAttRing() {
+  const total = data.players.length;
+  const present = Object.values(todayAttendance).filter(Boolean).length;
+  const pct = total ? Math.round(present/total*100) : 0;
+  const circumference = 163;
+  const offset = circumference - (pct/100 * circumference);
+  document.getElementById('att-ring').style.strokeDashoffset = offset;
+  document.getElementById('att-pct').textContent = pct + '%';
+  document.getElementById('att-count').textContent = present + ' / ' + total + ' حاضر';
+}
+
+function saveAttendance() {
+  const date = new Date().toISOString().slice(0,10);
+  const type = document.getElementById('att-type').value;
+  const players = data.players.filter(p=>todayAttendance[p.id]).map(p=>p.id);
+  data.attendance.push({ date, type, players });
+  save();
+  showToast(`✅ تم حفظ الحضور: ${players.length} لاعب`);
+}
+
+// ── RATINGS ──
+function renderRatings() {
+  // Populate player select
+  const sel = document.getElementById('rate-player');
+  sel.innerHTML = '<option value="">كل اللاعبين</option>' +
+    data.players.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+
+  const today = new Date().toISOString().slice(0,10);
+  const dateInput = document.getElementById('rate-date');
+  if (!dateInput.value) dateInput.value = today;
+
+  const pid = parseInt(sel.value)||0;
+  let rs = [...data.ratings];
+  if (pid) rs = rs.filter(r=>r.playerId===pid);
+  rs.reverse();
+
+  const container = document.getElementById('ratings-list');
+  if (!rs.length) {
+    container.innerHTML = `<div class="empty-state">
+      <div class="icon">⭐</div><h3>لا توجد تقييمات</h3>
+      <p>ابدأ بتقييم أداء اللاعبين</p>
+    </div>`;
+    return;
+  }
+
+  container.innerHTML = `
+    <div style="background:var(--navy2);border:1px solid rgba(255,255,255,0.08);border-radius:16px;overflow:hidden">
+      <table class="history-table">
+        <thead><tr>
+          <th>اللاعب</th><th>التاريخ</th><th>النوع</th>
+          <th>سرعة</th><th>تمرير</th><th>تسديد</th><th>مراوغة</th><th>دفاع</th>
+          <th>الكلي</th><th>الملاحظة</th><th></th>
+        </tr></thead>
+        <tbody>
+          ${rs.map(r => {
+            const p = data.players.find(x=>x.id===r.playerId);
+            return `<tr>
+              <td><strong>${p?.name||'—'}</strong></td>
+              <td style="color:var(--text-muted)">${formatDate(r.date)}</td>
+              <td><span class="badge ${r.type==='مباراة'?'badge-gold':'badge-blue'}">${r.type}</span></td>
+              <td>${r.skills.speed}</td>
+              <td>${r.skills.passing}</td>
+              <td>${r.skills.shooting}</td>
+              <td>${r.skills.dribbling}</td>
+              <td>${r.skills.defense}</td>
+              <td><span style="font-size:18px;font-weight:900;color:${r.overall>=8?'var(--gold)':r.overall>=6?'var(--green)':'var(--text-muted)'}">${r.overall}</span></td>
+              <td style="color:var(--text-muted);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px">${r.note||'—'}</td>
+              <td><button class="btn btn-red" style="padding:4px 10px;font-size:12px" onclick="deleteRating(${r.id})">🗑️</button></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+function openRatingModal() {
+  if (!requireAdmin()) return;
+  const sel = document.getElementById('rm-player');
+  sel.innerHTML = data.players.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+
+  // Prefill from rating view selection
+  const preId = document.getElementById('rate-player').value;
+  if (preId) sel.value = preId;
+
+  document.getElementById('rm-date').value = new Date().toISOString().slice(0,10);
+  document.getElementById('rm-overall').value = 7;
+  document.getElementById('rm-note').value = '';
+
+  ['speed','passing','shooting','dribbling','defense'].forEach(s => {
+    const el = document.getElementById('rm-'+s);
+    el.value = 5;
+    el.nextElementSibling.textContent = '5';
+  });
+
+  openModal('rating-modal');
+}
+
+function saveRating() {
+  const playerId = parseInt(document.getElementById('rm-player').value);
+  if (!playerId) { showToast('⚠️ اختر لاعباً'); return; }
+  const rating = {
+    id: nextRatingId++,
+    playerId,
+    date: document.getElementById('rm-date').value,
+    type: document.getElementById('rm-type').value,
+    overall: parseFloat(document.getElementById('rm-overall').value),
+    skills: {
+      speed: parseInt(document.getElementById('rm-speed').value),
+      passing: parseInt(document.getElementById('rm-passing').value),
+      shooting: parseInt(document.getElementById('rm-shooting').value),
+      dribbling: parseInt(document.getElementById('rm-dribbling').value),
+      defense: parseInt(document.getElementById('rm-defense').value),
+    },
+    note: document.getElementById('rm-note').value.trim()
+  };
+
+  // Update player skills with latest
+  const p = data.players.find(x=>x.id===playerId);
+  if (p) p.skills = { ...rating.skills };
+
+  data.ratings.push(rating);
+  save();
+  closeModal('rating-modal');
+  renderRatings();
+  renderDashboard();
+  showToast('✅ تم حفظ التقييم');
+}
+
+function deleteRating(id) {
+  if (!confirm('حذف هذا التقييم؟')) return;
+  data.ratings = data.ratings.filter(r=>r.id!==id);
+  save();
+  renderRatings();
+  showToast('🗑️ تم حذف التقييم');
+}
+
+// ── MODAL HELPERS ──
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ══════════════════════════════════════
+//  EXPORT CARD (PNG / PDF)
+// ══════════════════════════════════════
+let exportPlayerId = null;
+
+function openExportCard(id) {
+  exportPlayerId = id;
+  const p = data.players.find(x => x.id === id);
+  if (!p) return;
+  const wrap = document.getElementById('export-card-render');
+  wrap.innerHTML = buildCard(p, false).replace(`onclick="openProfile(${id})"`, '');
+  openModal('export-modal');
+}
+
+async function exportCardPNG() {
+  const spinner = document.getElementById('png-spinner');
+  spinner.style.display = 'block';
+  try {
+    const el = document.getElementById('export-card-render').firstElementChild;
+    const canvas = await html2canvas(el, {
+      scale: 3,
+      useCORS: true,
+      backgroundColor: null,
+      logging: false
+    });
+    const link = document.createElement('a');
+    const p = data.players.find(x => x.id === exportPlayerId);
+    link.download = `بطاقة-${p?.name || 'لاعب'}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    showToast('✅ تم حفظ البطاقة كصورة PNG');
+  } catch(e) {
+    showToast('❌ حدث خطأ أثناء التصدير');
+  }
+  spinner.style.display = 'none';
+}
+
+async function exportCardPDF() {
+  const spinner = document.getElementById('pdf-spinner');
+  spinner.style.display = 'block';
+  try {
+    const el = document.getElementById('export-card-render').firstElementChild;
+    const canvas = await html2canvas(el, {
+      scale: 3,
+      useCORS: true,
+      backgroundColor: '#0a0e1a',
+      logging: false
+    });
+    const imgData = canvas.toDataURL('image/png');
+    const { jsPDF } = window.jspdf;
+    // Card ratio ~0.67, A4 portrait
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const pageW = pdf.internal.pageSize.getWidth();
+    const cardW = 90;
+    const cardH = cardW / 0.67;
+    const x = (pageW - cardW) / 2;
+    const y = 30;
+    // Dark background
+    pdf.setFillColor(10, 14, 26);
+    pdf.rect(0, 0, pageW, pdf.internal.pageSize.getHeight(), 'F');
+    pdf.addImage(imgData, 'PNG', x, y, cardW, cardH);
+    const p = data.players.find(x => x.id === exportPlayerId);
+    // Player name below card
+    pdf.setTextColor(245, 197, 24);
+    pdf.setFontSize(16);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text(p?.name || '', pageW/2, y + cardH + 14, { align: 'center' });
+    pdf.setTextColor(148, 163, 184);
+    pdf.setFontSize(10);
+    pdf.text('فريق المستقبل — Football Academy', pageW/2, y + cardH + 22, { align: 'center' });
+    pdf.save(`بطاقة-${p?.name || 'لاعب'}.pdf`);
+    showToast('✅ تم حفظ البطاقة كـ PDF');
+  } catch(e) {
+    showToast('❌ حدث خطأ أثناء التصدير');
+    console.error(e);
+  }
+  spinner.style.display = 'none';
+}
+
+// ══════════════════════════════════════
+//  SETTINGS
+// ══════════════════════════════════════
+const APPS_SCRIPT_CODE = `// فريق المستقبل — Google Apps Script
+// الصق هذا الكود في Apps Script ثم Deploy كـ Web App
+
+const SHEET_NAME = 'Academy';
+
+function doPost(e) {
+  try {
+    const body = JSON.parse(e.postData.contents);
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    let sh = ss.getSheetByName(SHEET_NAME);
+    if (!sh) sh = ss.insertSheet(SHEET_NAME);
+    sh.clearContents();
+    sh.getRange(1,1).setValue(JSON.stringify(body));
+    return ContentService.createTextOutput(JSON.stringify({ok:true}))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({ok:false,error:err.message}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doGet(e) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sh = ss.getSheetByName(SHEET_NAME);
+    if (!sh) return ContentService.createTextOutput(JSON.stringify({ok:false,error:'No data'}))
+      .setMimeType(ContentService.MimeType.JSON);
+    const val = sh.getRange(1,1).getValue();
+    return ContentService.createTextOutput(val || '{}')
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({ok:false,error:err.message}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}`;
+
+let gsUrl = localStorage.getItem('gs_url') || 'https://script.google.com/macros/s/AKfycby84-QhGJgVXbU6zAFiPWQ-4DX52kubFyqRCH4gELTgCBdrbgRZm1yDJv9kWlII_7MujQ/exec';
+let gsConnected = false;
+let adminPassword = localStorage.getItem('admin_pass') || 'abood';
+
+function openSettings() {
+  if (!requireAdmin()) return;
+  // populate code block
+  document.getElementById('gs-code-block').textContent = APPS_SCRIPT_CODE;
+  // restore saved URL
+  if (gsUrl) {
+    document.getElementById('gs-url-input').value = gsUrl;
+    setGsConnected(true);
+  } else {
+    setGsConnected(false);
+  }
+  switchSettingsTab('gsheets');
+  openModal('settings-modal');
+}
+
+function switchSettingsTab(tab) {
+  document.querySelectorAll('.settings-tab').forEach((b,i) => {
+    b.classList.toggle('active', (tab==='gsheets'&&i===0)||(tab==='account'&&i===1));
+  });
+  document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('stab-'+tab).classList.add('active');
+}
+
+function setGsConnected(on) {
+  gsConnected = on;
+  document.getElementById('gs-dot').className = 'gs-dot ' + (on ? 'on' : 'off');
+  document.getElementById('gs-status-bar').className = 'gs-status ' + (on ? 'connected' : 'disconnected');
+  document.getElementById('gs-status-text').textContent = on
+    ? '✅ متصل بـ Google Sheets — البيانات تتزامن تلقائياً'
+    : '❌ غير متصل بـ Google Sheets';
+  document.getElementById('gs-sync-btn').style.display = on ? '' : 'none';
+  document.getElementById('gs-disconnect-btn').style.display = on ? '' : 'none';
+  document.getElementById('gs-last-sync').style.display = on ? '' : 'none';
+}
+
+async function connectGSheets() {
+  const url = document.getElementById('gs-url-input').value.trim();
+  if (!url || !url.includes('script.google.com')) {
+    showToast('⚠️ أدخل رابط Web App صحيح');
+    return;
+  }
+  showToast('⏳ جاري الاتصال...');
+  try {
+    await pushToSheets(url);
+    gsUrl = url;
+    localStorage.setItem('gs_url', gsUrl);
+    setGsConnected(true);
+    updateSyncTime();
+    showToast('✅ تم الربط بـ Google Sheets بنجاح!');
+  } catch(e) {
+    showToast('❌ فشل الاتصال — تأكد من الرابط وإعدادات Deploy');
+  }
+}
+
+async function pushToSheets(url) {
+  const payload = {
+    players: data.players.map(p => ({ ...p, photo: p.photo ? '[photo]' : null })),
+    ratings: data.ratings,
+    attendance: data.attendance,
+    lastSync: new Date().toISOString()
+  };
+  const jsonStr = JSON.stringify(payload);
+
+  // Method 1: hidden form POST via iframe — bypasses CORS 100%
+  try {
+    let iframe = document.getElementById('_gs_iframe');
+    if (!iframe) {
+      iframe = document.createElement('iframe');
+      iframe.name = '_gs_iframe';
+      iframe.id = '_gs_iframe';
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+    }
+
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = url;
+    form.target = '_gs_iframe';
+    form.style.display = 'none';
+
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'data';
+    input.value = jsonStr;
+    form.appendChild(input);
+
+    document.body.appendChild(form);
+    form.submit();
+    setTimeout(() => { try { form.remove(); } catch(e){} }, 5000);
+    console.log('✅ Form POST submitted, size:', jsonStr.length);
+    return { ok: true };
+  } catch(e) {
+    console.warn('Form POST failed:', e);
+  }
+
+  // Method 2: fetch no-cors POST fallback
+  try {
+    const formData = new FormData();
+    formData.append('data', jsonStr);
+    await fetch(url, { method: 'POST', body: formData, mode: 'no-cors' });
+    console.log('✅ fetch no-cors POST sent');
+    return { ok: true };
+  } catch(e2) {
+    console.warn('fetch POST failed:', e2);
+  }
+
+  return { ok: false };
+}
+
+async function syncFromSheets() {
+  if (!gsUrl) { showToast('⚠️ لم يتم الربط بعد'); return; }
+  showToast('⏳ جاري التزامن...');
+  try {
+    const res = await fetch(gsUrl + '?t=' + Date.now());
+    const text = await res.text();
+    console.log('Sync raw:', text.slice(0, 200));
+    let remote;
+    try { remote = JSON.parse(text); } catch(e) { throw new Error('بيانات غير صالحة'); }
+    if (!remote || !remote.players) throw new Error('لا توجد بيانات في الشيت بعد');
+    // Merge: keep local photos, update rest
+    const photoMap = {};
+    data.players.forEach(p => { if (p.photo) photoMap[p.id] = p.photo; });
+    data.players = remote.players.map(p => ({ ...p, photo: photoMap[p.id] || null }));
+    data.ratings = remote.ratings || [];
+    data.attendance = remote.attendance || [];
+    nextPlayerId = Math.max(...data.players.map(p=>p.id), 0) + 1;
+    nextRatingId = Math.max(...data.ratings.map(r=>r.id), 0) + 1;
+    save();
+    renderDashboard();
+    updateSyncTime();
+    showToast('✅ تم التزامن — ' + data.players.length + ' لاعب');
+  } catch(e) {
+    console.error('Sync error:', e);
+    showToast('❌ ' + (e.message || 'فشل التزامن'));
+  }
+}
+
+function disconnectGSheets() {
+  if (!confirm('هل تريد فصل ربط Google Sheets؟')) return;
+  gsUrl = '';
+  localStorage.removeItem('gs_url');
+  document.getElementById('gs-url-input').value = '';
+  setGsConnected(false);
+  showToast('🔌 تم فصل الربط');
+}
+
+function updateSyncTime() {
+  const now = new Date();
+  document.getElementById('gs-sync-time').textContent =
+    now.toLocaleDateString('ar-EG') + ' — ' + now.toLocaleTimeString('ar-EG', {hour:'2-digit',minute:'2-digit'});
+}
+
+function copyAppsScript() {
+  navigator.clipboard.writeText(APPS_SCRIPT_CODE)
+    .then(() => showToast('✅ تم نسخ الكود'))
+    .catch(() => showToast('❌ تعذّر النسخ — انسخ يدوياً'));
+}
+
+// Auto-push to sheets whenever data changes
+function save() {
+  localStorage.setItem('academy_data', JSON.stringify(data));
+  if (gsUrl) {
+    // أرسل للشيت مباشرة بعد كل تغيير
+    pushToSheets(gsUrl)
+      .then(() => {
+        gsConnected = true;
+        updateSyncTime();
+      })
+      .catch(() => {
+        gsConnected = false;
+      });
+  }
+}
+
+// Password change
+function changePassword() {
+  const p1 = document.getElementById('new-pass1').value;
+  const p2 = document.getElementById('new-pass2').value;
+  if (!p1) { showToast('⚠️ أدخل كلمة المرور الجديدة'); return; }
+  if (p1 !== p2) { showToast('❌ كلمتا المرور غير متطابقتين'); return; }
+  adminPassword = p1;
+  localStorage.setItem('admin_pass', p1);
+  document.getElementById('new-pass1').value = '';
+  document.getElementById('new-pass2').value = '';
+  showToast('✅ تم تغيير كلمة المرور');
+}
+
+// Override doLogin to use dynamic password
+const _origDoLogin = doLogin;
+function doLogin() {
+  if (loginTab === 'guest') { enterApp('guest'); return; }
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  const currentPass = localStorage.getItem('admin_pass') || 'abood';
+  if (u === ADMIN_USER && p === currentPass) {
+    enterApp('admin');
+  } else {
+    document.getElementById('login-error').classList.add('show');
+    document.getElementById('login-pass').value = '';
+    document.getElementById('login-pass').focus();
+  }
+}
+
+// ── INIT ── show login screen, app hidden until login
+switchTab('admin');
+</script>
+</body>
+</html>
