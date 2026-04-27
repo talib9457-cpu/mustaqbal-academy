@@ -1469,6 +1469,75 @@
     .stats-banner { grid-template-columns: repeat(2, 1fr); gap: 8px; }
     .stat-val { font-size: 24px; }
   }
+
+  /* ══════════════════════════════
+     REPORTS — التقارير الشهرية
+  ══════════════════════════════ */
+  .report-year-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .report-month-card {
+    background: var(--navy2);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 16px;
+    padding: 16px;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .report-month-card.has-data { border-color: rgba(245,197,24,0.2); cursor: pointer; }
+  .report-month-card.has-data:hover { border-color: rgba(245,197,24,0.4); transform: translateY(-2px); }
+  .report-month-card.no-data { opacity: 0.4; }
+  .report-month-name { font-size: 13px; font-weight: 800; color: var(--gold); margin-bottom: 8px; }
+  .report-month-rating { font-size: 32px; font-weight: 900; line-height: 1; margin-bottom: 2px; }
+  .report-month-sub { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
+  .report-month-bar { height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; margin-bottom: 8px; }
+  .report-month-bar-fill { height: 100%; border-radius: 2px; }
+  .report-month-skills { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 8px; }
+  .report-skill-row { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-muted); }
+  .report-skill-row span:last-child { font-weight: 700; color: var(--text); }
+  .session-pill { font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 700; display: inline-block; margin: 2px 2px 0 0; }
+  .session-pill.training { background: rgba(59,130,246,0.2); color: #60a5fa; }
+  .session-pill.match { background: rgba(245,197,24,0.2); color: var(--gold); }
+  .trend-up   { color: var(--green); font-size: 11px; font-weight: 700; }
+  .trend-down { color: var(--red); font-size: 11px; font-weight: 700; }
+  .trend-same { color: var(--text-muted); font-size: 11px; font-weight: 700; }
+
+  .report-summary {
+    background: linear-gradient(135deg, var(--navy2), var(--navy3));
+    border: 1px solid rgba(245,197,24,0.15);
+    border-radius: 20px;
+    padding: 20px 24px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .report-summary-stat { text-align: center; }
+  .report-summary-val { font-size: 28px; font-weight: 900; line-height: 1; }
+  .report-summary-label { font-size: 11px; color: var(--text-muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .report-chart {
+    background: var(--navy2);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+  .report-chart h3 { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+  .chart-bars { display: flex; align-items: flex-end; gap: 6px; height: 110px; }
+  .chart-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0; height: 100%; justify-content: flex-end; }
+  .chart-bar { width: 100%; border-radius: 4px 4px 0 0; min-height: 3px; }
+  .chart-bar-val { font-size: 9px; font-weight: 700; color: var(--text-muted); margin-top: 3px; }
+  .chart-bar-lbl { font-size: 9px; color: var(--text-muted); margin-top: 2px; }
+
+  @media (max-width: 768px) {
+    .report-year-grid { grid-template-columns: repeat(2, 1fr); }
+    .report-summary { grid-template-columns: repeat(2, 1fr); }
+  }
 </style>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#f5c518">
@@ -1550,6 +1619,9 @@
     </button>
     <button onclick="showView('ratings')" id="nav-ratings" class="admin-only">
       ⭐ <span>التقييمات</span>
+    </button>
+    <button onclick="showView('reports')" id="nav-reports">
+      📊 <span>التقارير</span>
     </button>
   </nav>
   <div style="display:flex;align-items:center;gap:10px">
@@ -1635,6 +1707,19 @@
       <button class="btn btn-gold" onclick="openRatingModal()">➕ تقييم جديد</button>
     </div>
     <div id="ratings-list"></div>
+  </div>
+
+  <!-- ── REPORTS ── -->
+  <div id="view-reports" class="view">
+    <div class="section-title">📊 <span>التقارير الشهرية</span></div>
+    <div class="toolbar">
+      <select class="filter-select" id="rep-player" style="flex:1;min-width:200px" onchange="renderReport()">
+        <option value="">اختر لاعباً...</option>
+      </select>
+      <select class="filter-select" id="rep-year" onchange="renderReport()"></select>
+      <button class="btn btn-gold" onclick="exportReportPDF()">📄 تصدير PDF</button>
+    </div>
+    <div id="report-content"></div>
   </div>
 
 </div>
@@ -1913,6 +1998,96 @@
   </div>
 </div>
 
+<!-- ── EDIT PLAYER MODAL ── -->
+<div class="modal-overlay" id="edit-player-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('edit-player-modal')">✕</button>
+    <h2>✏️ تعديل بيانات اللاعب</h2>
+    <input type="hidden" id="ep-id">
+    <div class="photo-upload-wrap">
+      <div class="photo-preview" onclick="document.getElementById('ep-photo-input').click()">
+        <span id="ep-photo-emoji">📷</span>
+        <img id="ep-photo-preview" src="" style="display:none">
+        <div class="photo-overlay">✏️</div>
+      </div>
+      <label class="photo-label" onclick="document.getElementById('ep-photo-input').click()">تغيير صورة اللاعب</label>
+      <input type="file" id="ep-photo-input" accept="image/*" onchange="previewPhoto('ep-photo-input','ep-photo-preview','ep-photo-emoji')">
+    </div>
+    <div class="form-grid">
+      <div class="form-group form-full">
+        <label>الاسم الكامل</label>
+        <input type="text" id="ep-name" placeholder="اسم اللاعب">
+      </div>
+      <div class="form-group">
+        <label>العمر</label>
+        <input type="number" id="ep-age" min="5" max="40">
+      </div>
+      <div class="form-group">
+        <label>المركز</label>
+        <select id="ep-pos">
+          <option>مهاجم</option><option>وسط</option>
+          <option>مدافع</option><option>حارس مرمى</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>رقم القميص</label>
+        <input type="number" id="ep-number" min="1" max="99">
+      </div>
+      <div class="form-group">
+        <label>الجنسية</label>
+        <input type="text" id="ep-nationality">
+      </div>
+      <div class="form-group">
+        <label>رقم الجوال (الوالد)</label>
+        <input type="text" id="ep-phone">
+      </div>
+      <div class="form-group">
+        <label>اسم الوالد</label>
+        <input type="text" id="ep-parent">
+      </div>
+      <div class="form-group">
+        <label>الفريق</label>
+        <select id="ep-team">
+          <option>الفريق أ</option><option>الفريق ب</option>
+          <option>الفريق جـ</option><option>الناشئين</option>
+        </select>
+      </div>
+    </div>
+    <div class="skills-section">
+      <h3>تعديل المهارات (1-10)</h3>
+      <div class="skill-row">
+        <div class="skill-label">السرعة</div>
+        <input type="range" class="skill-slider" id="ep-speed" min="1" max="10" value="5" oninput="this.nextElementSibling.textContent=this.value">
+        <div class="skill-val">5</div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-label">التمرير</div>
+        <input type="range" class="skill-slider" id="ep-passing" min="1" max="10" value="5" oninput="this.nextElementSibling.textContent=this.value">
+        <div class="skill-val">5</div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-label">التسديد</div>
+        <input type="range" class="skill-slider" id="ep-shooting" min="1" max="10" value="5" oninput="this.nextElementSibling.textContent=this.value">
+        <div class="skill-val">5</div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-label">المراوغة</div>
+        <input type="range" class="skill-slider" id="ep-dribbling" min="1" max="10" value="5" oninput="this.nextElementSibling.textContent=this.value">
+        <div class="skill-val">5</div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-label">الدفاع</div>
+        <input type="range" class="skill-slider" id="ep-defense" min="1" max="10" value="5" oninput="this.nextElementSibling.textContent=this.value">
+        <div class="skill-val">5</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:12px;margin-top:24px;justify-content:flex-end">
+      <button class="btn btn-outline" onclick="closeModal('edit-player-modal')">إلغاء</button>
+      <button class="btn btn-gold" onclick="saveEditPlayer()">💾 حفظ التعديلات</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast">✅ تم الحفظ بنجاح</div>
 
@@ -2049,28 +2224,28 @@ function requireAdmin(action) {
 }
 
 // ── DATA ──
-// امسح الكاش القديم دائماً — Google Sheets هو المصدر الوحيد
-localStorage.removeItem('academy_data');
+// حمّل من الكاش المحلي أولاً (يظهر فوراً بدون انتظار)
+// الشيت يُحدّث الكاش في الخلفية عند كل دخول
 
-let data = {
+let data = JSON.parse(localStorage.getItem('academy_data') || 'null') || {
   players: [],
   ratings: [],
   attendance: []
 };
 
-let nextPlayerId = 1;
-let nextRatingId = 1;
+let nextPlayerId = data.players.length > 0 ? Math.max(...data.players.map(p=>p.id), 0) + 1 : 1;
+let nextRatingId = data.ratings.length  > 0 ? Math.max(...data.ratings.map(r=>r.id), 0) + 1 : 1;
 let todayAttendance = {};
 
-// الحفظ — الشيت هو المصدر الوحيد
+// الحفظ — يحفظ محلياً ويرسل للشيت
 function save() {
+  localStorage.setItem('academy_data', JSON.stringify(data));
   if (gsUrl) {
     pushToSheets(gsUrl)
       .then(result => {
         if (result.ok) {
           gsConnected = true;
           updateSyncTime();
-          // تحقق أن البيانات وصلت فعلاً
           setTimeout(() => verifySync(), 4000);
         }
       })
@@ -2208,6 +2383,7 @@ function showView(name) {
   if (name === 'attendance') renderAttendance();
   if (name === 'ratings') renderRatings();
   if (name === 'dashboard') renderDashboard();
+  if (name === 'reports') { initReports(); renderReport(); }
 }
 
 // ── DASHBOARD ──
@@ -2319,6 +2495,84 @@ function renderPlayers() {
     return;
   }
   grid.innerHTML = players.map(p => buildCard(p)).join('');
+}
+
+// ── EDIT PLAYER ──
+function openEditPlayer(id) {
+  if (!requireAdmin()) return;
+  const p = data.players.find(x => x.id === id);
+  if (!p) return;
+
+  document.getElementById('ep-id').value = id;
+  document.getElementById('ep-name').value = p.name || '';
+  document.getElementById('ep-age').value = p.age || '';
+  document.getElementById('ep-number').value = p.number || '';
+  document.getElementById('ep-nationality').value = p.nationality || '';
+  document.getElementById('ep-phone').value = p.phone || '';
+  document.getElementById('ep-parent').value = p.parent || '';
+  document.getElementById('ep-pos').value = p.pos || 'مهاجم';
+  document.getElementById('ep-team').value = p.team || 'الفريق أ';
+
+  // المهارات
+  ['speed','passing','shooting','dribbling','defense'].forEach(sk => {
+    const el = document.getElementById('ep-' + sk);
+    const val = p.skills?.[sk] || 5;
+    el.value = val;
+    el.nextElementSibling.textContent = val;
+  });
+
+  // الصورة
+  document.getElementById('ep-photo-input').value = '';
+  const prevImg = document.getElementById('ep-photo-preview');
+  const prevEmoji = document.getElementById('ep-photo-emoji');
+  if (p.photo) {
+    prevImg.src = p.photo;
+    prevImg.style.display = 'block';
+    prevEmoji.style.display = 'none';
+  } else {
+    prevImg.src = '';
+    prevImg.style.display = 'none';
+    prevEmoji.style.display = '';
+  }
+
+  closeModal('profile-modal');
+  openModal('edit-player-modal');
+}
+
+async function saveEditPlayer() {
+  const id = parseInt(document.getElementById('ep-id').value);
+  const p = data.players.find(x => x.id === id);
+  if (!p) return;
+
+  const name = document.getElementById('ep-name').value.trim();
+  if (!name) { showToast('⚠️ أدخل اسم اللاعب'); return; }
+
+  // تحديث البيانات
+  p.name        = name;
+  p.age         = parseInt(document.getElementById('ep-age').value) || p.age;
+  p.pos         = document.getElementById('ep-pos').value;
+  p.number      = parseInt(document.getElementById('ep-number').value) || p.number;
+  p.nationality = document.getElementById('ep-nationality').value;
+  p.phone       = document.getElementById('ep-phone').value;
+  p.parent      = document.getElementById('ep-parent').value;
+  p.team        = document.getElementById('ep-team').value;
+  p.skills = {
+    speed:     parseInt(document.getElementById('ep-speed').value),
+    passing:   parseInt(document.getElementById('ep-passing').value),
+    shooting:  parseInt(document.getElementById('ep-shooting').value),
+    dribbling: parseInt(document.getElementById('ep-dribbling').value),
+    defense:   parseInt(document.getElementById('ep-defense').value),
+  };
+
+  // تحديث الصورة إذا اختار واحدة جديدة
+  const newPhoto = await getPhotoBase64('ep-photo-input');
+  if (newPhoto) p.photo = newPhoto;
+
+  save();
+  closeModal('edit-player-modal');
+  renderPlayers();
+  renderDashboard();
+  showToast('✅ تم تحديث بيانات ' + p.name);
 }
 
 // ── PHOTO HELPER ──
@@ -2476,8 +2730,9 @@ function openProfile(id) {
     </div>
     <div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap">
       <button class="btn btn-gold admin-only" onclick="closeModal('profile-modal');showView('ratings');setTimeout(()=>{document.getElementById('rate-player').value=${id};openRatingModal();},100)">⭐ تقييم الآن</button>
-      <button class="btn btn-blue" onclick="openExportCard(${id})">🖼️ حفظ البطاقة</button>
-      <button class="btn btn-red admin-only" onclick="deletePlayer(${id})">🗑️ حذف اللاعب</button>
+      <button class="btn btn-blue admin-only" onclick="openEditPlayer(${id})">✏️ تعديل البيانات</button>
+      <button class="btn btn-outline" onclick="openExportCard(${id})">🖼️ حفظ البطاقة</button>
+      <button class="btn btn-red admin-only" onclick="deletePlayer(${id})">🗑️ حذف</button>
     </div>`;
 
   openModal('profile-modal');
@@ -2742,21 +2997,17 @@ async function exportCardPNG() {
   const spinner = document.getElementById('png-spinner');
   spinner.style.display = 'block';
   try {
-    const el = document.getElementById('export-card-render').firstElementChild;
-    const canvas = await html2canvas(el, {
-      scale: 3,
-      useCORS: true,
-      backgroundColor: null,
-      logging: false
-    });
-    const link = document.createElement('a');
     const p = data.players.find(x => x.id === exportPlayerId);
-    link.download = `بطاقة-${p?.name || 'لاعب'}.png`;
+    if (!p) throw new Error('لاعب غير موجود');
+    const canvas = await drawCardCanvas(p);
+    const link = document.createElement('a');
+    link.download = `بطاقة-${p.name}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
-    showToast('✅ تم حفظ البطاقة كصورة PNG');
+    showToast('✅ تم حفظ البطاقة PNG');
   } catch(e) {
-    showToast('❌ حدث خطأ أثناء التصدير');
+    console.error(e);
+    showToast('❌ ' + e.message);
   }
   spinner.style.display = 'none';
 }
@@ -2765,42 +3016,190 @@ async function exportCardPDF() {
   const spinner = document.getElementById('pdf-spinner');
   spinner.style.display = 'block';
   try {
-    const el = document.getElementById('export-card-render').firstElementChild;
-    const canvas = await html2canvas(el, {
-      scale: 3,
-      useCORS: true,
-      backgroundColor: '#0a0e1a',
-      logging: false
-    });
+    const p = data.players.find(x => x.id === exportPlayerId);
+    if (!p) throw new Error('لاعب غير موجود');
+    const canvas = await drawCardCanvas(p);
     const imgData = canvas.toDataURL('image/png');
     const { jsPDF } = window.jspdf;
-    // Card ratio ~0.67, A4 portrait
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
     const pageW = pdf.internal.pageSize.getWidth();
-    const cardW = 90;
-    const cardH = cardW / 0.67;
-    const x = (pageW - cardW) / 2;
-    const y = 30;
-    // Dark background
+    const cardW = 90, cardH = cardW / 0.67;
+    const x = (pageW - cardW) / 2, y = 30;
     pdf.setFillColor(10, 14, 26);
     pdf.rect(0, 0, pageW, pdf.internal.pageSize.getHeight(), 'F');
     pdf.addImage(imgData, 'PNG', x, y, cardW, cardH);
-    const p = data.players.find(x => x.id === exportPlayerId);
-    // Player name below card
     pdf.setTextColor(245, 197, 24);
     pdf.setFontSize(16);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text(p?.name || '', pageW/2, y + cardH + 14, { align: 'center' });
+    pdf.text(p.name, pageW/2, y + cardH + 14, { align: 'center' });
     pdf.setTextColor(148, 163, 184);
     pdf.setFontSize(10);
     pdf.text('فريق المستقبل — Football Academy', pageW/2, y + cardH + 22, { align: 'center' });
-    pdf.save(`بطاقة-${p?.name || 'لاعب'}.pdf`);
-    showToast('✅ تم حفظ البطاقة كـ PDF');
+    pdf.save(`بطاقة-${p.name}.pdf`);
+    showToast('✅ تم حفظ البطاقة PDF');
   } catch(e) {
-    showToast('❌ حدث خطأ أثناء التصدير');
     console.error(e);
+    showToast('❌ ' + e.message);
   }
   spinner.style.display = 'none';
+}
+
+// رسم البطاقة على Canvas بدون html2canvas (يشتغل على الجوال)
+async function drawCardCanvas(p) {
+  const W = 400, H = 600;
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  const rating = getPlayerRating(p.id);
+  const ratingVal = rating ? rating.toFixed(1) : getOverallFromSkills(p.skills);
+  const isPotm = rating && getCardClass(rating) === 'potm-card';
+  const isGold = rating && getCardClass(rating) === 'gold-card';
+  const isBronze = rating && getCardClass(rating) === 'bronze-card';
+
+  // خلفية البطاقة
+  const grad = ctx.createLinearGradient(0, 0, W, H);
+  if (isPotm) {
+    grad.addColorStop(0, '#1e3a70'); grad.addColorStop(0.5, '#060c22'); grad.addColorStop(1, '#162248');
+  } else if (isGold) {
+    grad.addColorStop(0, '#ffe066'); grad.addColorStop(0.5, '#c8920a'); grad.addColorStop(1, '#f0c800');
+  } else if (isBronze) {
+    grad.addColorStop(0, '#f0c080'); grad.addColorStop(0.5, '#a06010'); grad.addColorStop(1, '#e0a040');
+  } else {
+    grad.addColorStop(0, '#e8eef8'); grad.addColorStop(0.5, '#8e9db5'); grad.addColorStop(1, '#d0daea');
+  }
+
+  // شكل البطاقة المستدير
+  const r = 24;
+  ctx.beginPath();
+  ctx.moveTo(r, 0); ctx.lineTo(W-r, 0);
+  ctx.quadraticCurveTo(W, 0, W, r);
+  ctx.lineTo(W, H-r); ctx.quadraticCurveTo(W, H, W-r, H);
+  ctx.lineTo(r, H); ctx.quadraticCurveTo(0, H, 0, H-r);
+  ctx.lineTo(0, r); ctx.quadraticCurveTo(0, 0, r, 0);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+  ctx.save(); ctx.clip();
+
+  // خطوط التزيين القطرية
+  ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+  ctx.lineWidth = 1.5;
+  for (let i = -H; i < W+H; i += 18) {
+    ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i+H, H); ctx.stroke();
+  }
+
+  // صورة اللاعب
+  const photoH = H * 0.58;
+  if (p.photo && !p.photo.includes('[photo]')) {
+    try {
+      const img = await loadImage(p.photo);
+      ctx.drawImage(img, 0, 0, W, photoH);
+    } catch(e) {
+      drawNoPhoto(ctx, W, photoH, p.pos);
+    }
+  } else {
+    drawNoPhoto(ctx, W, photoH, p.pos);
+  }
+
+  // تدرج فوق الصورة
+  const fadeGrad = ctx.createLinearGradient(0, photoH * 0.4, 0, photoH);
+  if (isPotm) {
+    fadeGrad.addColorStop(0, 'rgba(6,12,34,0)');
+    fadeGrad.addColorStop(1, 'rgba(6,12,34,1)');
+  } else if (isGold) {
+    fadeGrad.addColorStop(0, 'rgba(200,146,10,0)');
+    fadeGrad.addColorStop(1, 'rgba(176,120,0,1)');
+  } else if (isBronze) {
+    fadeGrad.addColorStop(0, 'rgba(154,94,16,0)');
+    fadeGrad.addColorStop(1, 'rgba(122,72,8,1)');
+  } else {
+    fadeGrad.addColorStop(0, 'rgba(122,141,170,0)');
+    fadeGrad.addColorStop(1, 'rgba(106,125,152,1)');
+  }
+  ctx.fillStyle = fadeGrad;
+  ctx.fillRect(0, photoH * 0.4, W, photoH * 0.6);
+
+  // التقييم أعلى اليسار
+  ctx.fillStyle = isPotm ? '#f5c518' : '#fff';
+  ctx.font = 'bold 72px Arial';
+  ctx.textAlign = 'left';
+  ctx.fillText(ratingVal, 28, 82);
+
+  // المركز
+  const posMap = {'مهاجم':'FW','وسط':'MF','مدافع':'DF','حارس مرمى':'GK'};
+  ctx.font = 'bold 24px Arial';
+  ctx.fillStyle = isPotm ? 'rgba(245,197,24,0.75)' : 'rgba(255,255,255,0.8)';
+  ctx.fillText(posMap[p.pos]||'MF', 32, 110);
+
+  // العلم أعلى اليمين
+  const flagMap = {'عُماني':'🇴🇲','سعودي':'🇸🇦','إماراتي':'🇦🇪','كويتي':'🇰🇼','بحريني':'🇧🇭','قطري':'🇶🇦'};
+  ctx.font = '36px Arial';
+  ctx.textAlign = 'right';
+  ctx.fillText(flagMap[p.nationality]||'🏳️', W-28, 60);
+
+  // POTM label
+  if (isPotm) {
+    ctx.font = 'bold 18px Arial';
+    ctx.fillStyle = '#f5c518';
+    ctx.textAlign = 'center';
+    ctx.fillText('★ لاعب الشهر ★', W/2, photoH + 28);
+  }
+
+  // اسم اللاعب
+  ctx.font = 'bold 28px Arial';
+  ctx.fillStyle = '#fff';
+  ctx.textAlign = 'center';
+  ctx.fillText(p.name, W/2, isPotm ? photoH + 58 : photoH + 38);
+
+  // خط فاصل
+  const lineY = isPotm ? photoH + 72 : photoH + 52;
+  const lineColor = isPotm ? 'rgba(245,197,24,0.5)' : 'rgba(255,255,255,0.3)';
+  ctx.strokeStyle = lineColor; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(W*0.15, lineY); ctx.lineTo(W*0.85, lineY); ctx.stroke();
+
+  // الإحصائيات 3 أعمدة
+  const s = p.skills;
+  const stats = [
+    ['سرعة', s.speed], ['تسديد', s.shooting], ['تمرير', s.passing],
+    ['مراوغة', s.dribbling], ['دفاع', s.defense]
+  ];
+  const statY = lineY + 20;
+  const cols = [W*0.2, W*0.5, W*0.8];
+  stats.forEach((st, i) => {
+    const col = cols[i % 3];
+    const row = i < 3 ? 0 : 1;
+    const sy = statY + row * 52;
+    ctx.font = 'bold 30px Arial';
+    ctx.fillStyle = isPotm ? '#f5c518' : '#fff';
+    ctx.textAlign = 'center';
+    ctx.fillText(st[1], col, sy + 28);
+    ctx.font = '16px Arial';
+    ctx.fillStyle = isPotm ? 'rgba(245,197,24,0.7)' : 'rgba(255,255,255,0.6)';
+    ctx.fillText(st[0], col, sy + 48);
+  });
+
+  ctx.restore();
+  return canvas;
+}
+
+function drawNoPhoto(ctx, W, H, pos) {
+  ctx.fillStyle = 'rgba(0,0,0,0.2)';
+  ctx.fillRect(0, 0, W, H);
+  const icons = {'مهاجم':'⚡','وسط':'🎯','مدافع':'🛡️','حارس مرمى':'🥅'};
+  ctx.font = `${W*0.35}px Arial`;
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(255,255,255,0.2)';
+  ctx.fillText(icons[pos]||'⚽', W/2, H*0.65);
+}
+
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = src;
+  });
 }
 
 // ══════════════════════════════════════
@@ -3054,6 +3453,313 @@ function doLogin() {
     document.getElementById('login-error').classList.add('show');
     document.getElementById('login-pass').value = '';
     document.getElementById('login-pass').focus();
+  }
+}
+
+// ══════════════════════════════════════
+//  REPORTS — التقارير الشهرية
+// ══════════════════════════════════════
+const MONTHS_AR = ['يناير','فبراير','مارس','أبريل','مايو','يونيو',
+                   'يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+
+function initReports() {
+  // ملء قائمة اللاعبين
+  const sel = document.getElementById('rep-player');
+  sel.innerHTML = '<option value="">اختر لاعباً...</option>' +
+    data.players.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+
+  // ملء قائمة السنوات
+  const yearSel = document.getElementById('rep-year');
+  const currentYear = new Date().getFullYear();
+  yearSel.innerHTML = '';
+  for (let y = currentYear; y >= currentYear - 4; y--) {
+    yearSel.innerHTML += `<option value="${y}">${y}</option>`;
+  }
+}
+
+function renderReport() {
+  const pid = parseInt(document.getElementById('rep-player').value);
+  const year = parseInt(document.getElementById('rep-year').value);
+  const container = document.getElementById('report-content');
+
+  if (!pid) {
+    container.innerHTML = `<div class="empty-state">
+      <div class="icon">📊</div>
+      <h3>اختر لاعباً لعرض تقريره</h3>
+      <p>يعرض التقرير أداء اللاعب شهراً بشهر خلال السنة</p>
+    </div>`;
+    return;
+  }
+
+  const player = data.players.find(p => p.id === pid);
+  if (!player) return;
+
+  // جمع تقييمات اللاعب للسنة المختارة
+  const playerRatings = data.ratings.filter(r =>
+    r.playerId === pid && r.date && r.date.startsWith(year.toString())
+  );
+
+  // تنظيم حسب الشهر
+  const monthData = Array.from({length: 12}, (_, i) => {
+    const month = String(i + 1).padStart(2, '0');
+    const monthRatings = playerRatings.filter(r => r.date.startsWith(`${year}-${month}`));
+    if (!monthRatings.length) return null;
+
+    const avgOverall = monthRatings.reduce((a,b) => a + b.overall, 0) / monthRatings.length;
+    const avgSkills = {
+      speed:     avg(monthRatings.map(r => r.skills?.speed || 0)),
+      passing:   avg(monthRatings.map(r => r.skills?.passing || 0)),
+      shooting:  avg(monthRatings.map(r => r.skills?.shooting || 0)),
+      dribbling: avg(monthRatings.map(r => r.skills?.dribbling || 0)),
+      defense:   avg(monthRatings.map(r => r.skills?.defense || 0)),
+    };
+    const trainings = monthRatings.filter(r => r.type === 'تدريب').length;
+    const matches   = monthRatings.filter(r => r.type === 'مباراة').length;
+    return { monthRatings, avgOverall, avgSkills, trainings, matches };
+  });
+
+  // إحصائيات السنة الكاملة
+  const allMonths = monthData.filter(Boolean);
+  const yearAvg   = allMonths.length ? avg(allMonths.map(m => m.avgOverall)) : 0;
+  const bestMonth = allMonths.length ? allMonths.reduce((a,b) => b.avgOverall > a.avgOverall ? b : a) : null;
+  const totalSessions = playerRatings.length;
+  const totalMatches  = playerRatings.filter(r => r.type === 'مباراة').length;
+
+  // الحضور
+  const attSessions = data.attendance.filter(a =>
+    a.players && a.players.includes(pid) &&
+    a.date && a.date.startsWith(year.toString())
+  ).length;
+
+  const ratingColor = (r) => r >= 8 ? 'var(--gold)' : r >= 6 ? 'var(--green)' : 'var(--blue-glow)';
+  const barColor    = (r) => r >= 8 ? '#f5c518' : r >= 6 ? '#10b981' : '#3b82f6';
+
+  // بناء الـ HTML
+  container.innerHTML = `
+
+    <!-- ملخص السنة -->
+    <div class="report-summary">
+      <div class="report-summary-stat">
+        <div class="report-summary-val" style="color:var(--gold)">${yearAvg ? yearAvg.toFixed(1) : '—'}</div>
+        <div class="report-summary-label">متوسط السنة</div>
+      </div>
+      <div class="report-summary-stat">
+        <div class="report-summary-val" style="color:var(--blue-glow)">${totalSessions}</div>
+        <div class="report-summary-label">إجمالي الجلسات</div>
+      </div>
+      <div class="report-summary-stat">
+        <div class="report-summary-val" style="color:var(--green)">${attSessions}</div>
+        <div class="report-summary-label">جلسات الحضور</div>
+      </div>
+      <div class="report-summary-stat">
+        <div class="report-summary-val" style="color:var(--purple)">${totalMatches}</div>
+        <div class="report-summary-label">المباريات</div>
+      </div>
+    </div>
+
+    <!-- رسم بياني -->
+    ${allMonths.length >= 2 ? `
+    <div class="report-chart">
+      <h3>📈 منحنى الأداء — ${year}</h3>
+      <div class="chart-bars">
+        ${monthData.map((m, i) => {
+          if (!m) return `
+            <div class="chart-bar-wrap">
+              <div class="chart-bar" style="height:3px;background:rgba(255,255,255,0.05)"></div>
+              <div class="chart-bar-lbl">${MONTHS_AR[i].slice(0,3)}</div>
+            </div>`;
+          const h = Math.round((m.avgOverall / 10) * 100);
+          return `
+            <div class="chart-bar-wrap">
+              <div class="chart-bar-val">${m.avgOverall.toFixed(1)}</div>
+              <div class="chart-bar" style="height:${h}%;background:${barColor(m.avgOverall)}"></div>
+              <div class="chart-bar-lbl">${MONTHS_AR[i].slice(0,3)}</div>
+            </div>`;
+        }).join('')}
+      </div>
+    </div>` : ''}
+
+    <!-- شبكة الأشهر -->
+    <div style="font-size:13px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">
+      📅 تفاصيل الأشهر — ${year}
+    </div>
+    <div class="report-year-grid">
+      ${monthData.map((m, i) => {
+        if (!m) return `
+          <div class="report-month-card no-data">
+            <div class="report-month-name">${MONTHS_AR[i]}</div>
+            <div style="font-size:12px;color:var(--text-muted)">لا توجد بيانات</div>
+          </div>`;
+
+        // اتجاه التغيير مقارنة بالشهر السابق
+        const prevMonth = monthData.slice(0, i).reverse().find(Boolean);
+        let trendHTML = '';
+        if (prevMonth) {
+          const diff = m.avgOverall - prevMonth.avgOverall;
+          if (diff > 0.1)      trendHTML = `<div class="trend-up">↑ +${diff.toFixed(1)}</div>`;
+          else if (diff < -0.1) trendHTML = `<div class="trend-down">↓ ${diff.toFixed(1)}</div>`;
+          else                  trendHTML = `<div class="trend-same">→ ثابت</div>`;
+        }
+
+        return `
+          <div class="report-month-card has-data">
+            <div class="report-month-name">${MONTHS_AR[i]}</div>
+            <div class="report-month-rating" style="color:${ratingColor(m.avgOverall)}">
+              ${m.avgOverall.toFixed(1)}
+            </div>
+            <div class="report-month-sub">${m.monthRatings.length} تقييم</div>
+            <div class="report-month-bar">
+              <div class="report-month-bar-fill"
+                style="width:${m.avgOverall*10}%;background:${barColor(m.avgOverall)}">
+              </div>
+            </div>
+            <div class="report-month-skills">
+              <div class="report-skill-row"><span>سرعة</span><span>${m.avgSkills.speed.toFixed(1)}</span></div>
+              <div class="report-skill-row"><span>تسديد</span><span>${m.avgSkills.shooting.toFixed(1)}</span></div>
+              <div class="report-skill-row"><span>تمرير</span><span>${m.avgSkills.passing.toFixed(1)}</span></div>
+              <div class="report-skill-row"><span>مراوغة</span><span>${m.avgSkills.dribbling.toFixed(1)}</span></div>
+              <div class="report-skill-row"><span>دفاع</span><span>${m.avgSkills.defense.toFixed(1)}</span></div>
+            </div>
+            <div style="margin-top:8px">
+              ${m.trainings ? `<span class="session-pill training">🏃 ${m.trainings} تدريب</span>` : ''}
+              ${m.matches   ? `<span class="session-pill match">⚽ ${m.matches} مباراة</span>` : ''}
+            </div>
+            ${trendHTML}
+          </div>`;
+      }).join('')}
+    </div>
+
+    ${allMonths.length === 0 ? `
+    <div class="empty-state">
+      <div class="icon">📭</div>
+      <h3>لا توجد تقييمات في ${year}</h3>
+      <p>ابدأ بتسجيل تقييمات اللاعب من صفحة التقييمات</p>
+    </div>` : ''}
+  `;
+}
+
+function avg(arr) {
+  return arr.length ? arr.reduce((a,b) => a+b, 0) / arr.length : 0;
+}
+
+async function exportReportPDF() {
+  const pid = parseInt(document.getElementById('rep-player').value);
+  const year = parseInt(document.getElementById('rep-year').value);
+  if (!pid) { showToast('⚠️ اختر لاعباً أولاً'); return; }
+
+  const player = data.players.find(p => p.id === pid);
+  showToast('⏳ جاري إنشاء التقرير...');
+
+  try {
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const W = pdf.internal.pageSize.getWidth();
+
+    // خلفية داكنة
+    pdf.setFillColor(10, 14, 26);
+    pdf.rect(0, 0, W, 297, 'F');
+
+    // رأس التقرير
+    pdf.setFillColor(245, 197, 24);
+    pdf.rect(0, 0, W, 28, 'F');
+    pdf.setTextColor(26, 12, 0);
+    pdf.setFontSize(16); pdf.setFont('helvetica', 'bold');
+    pdf.text('MUSTAQBAL ACADEMY', W/2, 12, { align: 'center' });
+    pdf.setFontSize(10);
+    pdf.text(`Monthly Performance Report — ${year}`, W/2, 20, { align: 'center' });
+
+    // اسم اللاعب
+    pdf.setFillColor(17, 24, 39);
+    pdf.rect(0, 28, W, 20, 'F');
+    pdf.setTextColor(245, 197, 24);
+    pdf.setFontSize(14); pdf.setFont('helvetica', 'bold');
+    pdf.text(player.name, W/2, 40, { align: 'center' });
+    pdf.setTextColor(148, 163, 184);
+    pdf.setFontSize(9);
+    pdf.text(`${player.pos} | ${player.team} | #${player.number}`, W/2, 46, { align: 'center' });
+
+    // جدول الأشهر
+    const playerRatings = data.ratings.filter(r =>
+      r.playerId === pid && r.date?.startsWith(year.toString())
+    );
+
+    let y = 56;
+    const cols = [14, 55, 85, 105, 120, 135, 150, 165, 180];
+    const headers = ['الشهر', 'التقييم', 'سرعة', 'تمرير', 'تسديد', 'مراوغة', 'دفاع', 'تدريب', 'مباراة'];
+
+    // رأس الجدول
+    pdf.setFillColor(30, 42, 80);
+    pdf.rect(10, y, W-20, 8, 'F');
+    pdf.setTextColor(245, 197, 24);
+    pdf.setFontSize(8); pdf.setFont('helvetica', 'bold');
+    headers.forEach((h, i) => pdf.text(h, cols[i], y+5.5));
+    y += 10;
+
+    // صفوف الأشهر
+    MONTHS_AR.forEach((monthName, mi) => {
+      const month = String(mi + 1).padStart(2, '0');
+      const mRatings = playerRatings.filter(r => r.date.startsWith(`${year}-${month}`));
+
+      if (mi % 2 === 0) {
+        pdf.setFillColor(17, 24, 39);
+        pdf.rect(10, y-1, W-20, 8, 'F');
+      }
+
+      if (!mRatings.length) {
+        pdf.setTextColor(60, 70, 90);
+        pdf.setFont('helvetica', 'normal');
+        pdf.text(monthName, cols[0], y+5);
+        pdf.text('—', cols[1], y+5);
+      } else {
+        const avgR = avg(mRatings.map(r => r.overall));
+        const s = {
+          speed:     avg(mRatings.map(r => r.skills?.speed||0)),
+          passing:   avg(mRatings.map(r => r.skills?.passing||0)),
+          shooting:  avg(mRatings.map(r => r.skills?.shooting||0)),
+          dribbling: avg(mRatings.map(r => r.skills?.dribbling||0)),
+          defense:   avg(mRatings.map(r => r.skills?.defense||0)),
+        };
+        const tr = mRatings.filter(r=>r.type==='تدريب').length;
+        const ma = mRatings.filter(r=>r.type==='مباراة').length;
+
+        const c = avgR >= 8 ? [245,197,24] : avgR >= 6 ? [16,185,129] : [59,130,246];
+        pdf.setTextColor(226, 232, 240); pdf.setFont('helvetica', 'normal');
+        pdf.text(monthName, cols[0], y+5);
+        pdf.setTextColor(...c); pdf.setFont('helvetica', 'bold');
+        pdf.text(avgR.toFixed(1), cols[1], y+5);
+        pdf.setTextColor(200, 210, 230); pdf.setFont('helvetica', 'normal');
+        pdf.text(s.speed.toFixed(1),     cols[2], y+5);
+        pdf.text(s.passing.toFixed(1),   cols[3], y+5);
+        pdf.text(s.shooting.toFixed(1),  cols[4], y+5);
+        pdf.text(s.dribbling.toFixed(1), cols[5], y+5);
+        pdf.text(s.defense.toFixed(1),   cols[6], y+5);
+        pdf.setTextColor(96, 165, 250);
+        pdf.text(tr.toString(), cols[7], y+5);
+        pdf.setTextColor(245, 197, 24);
+        pdf.text(ma.toString(), cols[8], y+5);
+      }
+      y += 9;
+    });
+
+    // الملخص
+    y += 6;
+    const allM = playerRatings;
+    const yAvg = allM.length ? avg(allM.map(r=>r.overall)) : 0;
+    pdf.setFillColor(245, 197, 24);
+    pdf.rect(10, y, W-20, 0.5, 'F');
+    y += 8;
+    pdf.setTextColor(245, 197, 24); pdf.setFont('helvetica', 'bold'); pdf.setFontSize(10);
+    pdf.text(`متوسط السنة: ${yAvg.toFixed(1)}   |   إجمالي الجلسات: ${allM.length}   |   المباريات: ${allM.filter(r=>r.type==='مباراة').length}`, W/2, y, { align: 'center' });
+
+    // تذييل
+    pdf.setTextColor(60, 70, 90); pdf.setFontSize(8); pdf.setFont('helvetica', 'normal');
+    pdf.text(`Generated: ${new Date().toLocaleDateString('ar-EG')}  |  Mustaqbal Football Academy`, W/2, 287, { align: 'center' });
+
+    pdf.save(`تقرير-${player.name}-${year}.pdf`);
+    showToast('✅ تم تصدير التقرير PDF');
+  } catch(e) {
+    console.error(e);
+    showToast('❌ خطأ في التصدير');
   }
 }
 
